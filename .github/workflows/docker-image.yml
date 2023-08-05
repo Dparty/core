@@ -21,11 +21,10 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      # -
-      #   name: Build and push
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: ./Dockerfile
-      #     push: true
-      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
+      - name: Build Docker image
+        run: |
+          docker build -t core:latest .
+      - name: Push Docker image
+        run: |
+          docker tag core:latest ${{ secrets.DOCKERHUB_USERNAME }}/core:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/core:latest
