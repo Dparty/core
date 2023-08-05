@@ -3,9 +3,9 @@ package services
 import (
 	"fmt"
 
-	"gitea.svc.boardware.com/bwc/common/notifications"
-	"gitea.svc.boardware.com/bwc/model"
-	"gitea.svc.boardware.com/bwc/model/core"
+	"github.com/Dparty/common/notifications"
+	"github.com/Dparty/model"
+	"github.com/Dparty/model/core"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -38,6 +38,4 @@ func init() {
 		panic(err)
 	}
 	DB.AutoMigrate(&core.Account{})
-	DB.AutoMigrate(&core.Service{})
-	DB.AutoMigrate(&core.VerificationCode{})
 }

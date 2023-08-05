@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	api "gitea.svc.boardware.com/bwc/core-api"
+	api "github.com/Dparty/core-api"
 
-	"gitea.svc.boardware.com/bwc/common/errors"
+	"github.com/Dparty/common/errors"
 
-	"gitea.svc.boardware.com/bwc/common/utils"
+	"github.com/Dparty/common/utils"
 
 	"github.com/gin-gonic/gin"
 )

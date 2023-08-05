@@ -49,7 +49,7 @@ VALUES ("1681137588590612481",  "2023-07-18 11:03:29.804", "2023-07-18 11:03:29.
 ```
 
 ```
-GOPRIVATE=gitea.svc.boardware.com/bwc go get -u -f gitea.svc.boardware.com/bwc/core
+GOPRIVATE=github.com/Dparty go get -u -f github.com/Dparty/core
 ```
 
 ## Docker run

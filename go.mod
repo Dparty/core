@@ -1,17 +1,17 @@
-module gitea.svc.boardware.com/bwc/core
+module github.com/Dparty/core
 
 go 1.20
 
 require (
-	gitea.svc.boardware.com/bwc/common v0.0.0-20230803081019-d7596a31232e
-	gitea.svc.boardware.com/bwc/core-api v0.0.0-20230803070644-4c9da42119d5
-	gitea.svc.boardware.com/bwc/model v0.0.0-20230803084740-6fe750ee5bf4
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
 	gorm.io/gorm v1.25.2
 )
 
 require (
+	github.com/Dparty/common v0.0.0-20230805095550-1c3b9aeb54a9 // indirect
+	github.com/Dparty/core-api v0.0.0-20230805095338-dbf478e28f44 // indirect
+	github.com/Dparty/model v0.0.0-20230805100331-3b625802c523 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/sonic v1.10.0-rc3 // indirect
 	github.com/chenyunda218/golambda v0.0.0-20230803032259-df05fc903c0c // indirect
@@ -46,10 +46,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.4.0 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/net v0.13.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/crypto v0.12.0 // indirect
+	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

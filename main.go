@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"gitea.svc.boardware.com/bwc/core/controllers"
-	_ "gitea.svc.boardware.com/bwc/core/services"
+	"github.com/Dparty/core/controllers"
+	_ "github.com/Dparty/core/services"
 
 	"github.com/spf13/viper"
 )

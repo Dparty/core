@@ -1,16 +1,16 @@
 package controllers
 
 import (
-	api "gitea.svc.boardware.com/bwc/core-api"
-	core "gitea.svc.boardware.com/bwc/core/services"
+	api "github.com/Dparty/core-api"
+	core "github.com/Dparty/core/services"
 
-	"gitea.svc.boardware.com/bwc/common/errors"
+	"github.com/Dparty/common/errors"
 
-	"gitea.svc.boardware.com/bwc/common/constants"
+	"github.com/Dparty/common/constants"
 
 	"net/http"
 
-	"gitea.svc.boardware.com/bwc/common/utils"
+	"github.com/Dparty/common/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,18 +32,6 @@ func (AccountApi) CreateSession(c *gin.Context, createSessionRequest api.CreateS
 }
 
 func (AccountApi) CreateAccount(c *gin.Context, createAccountRequest api.CreateAccountRequest) {
-	if createAccountRequest.VerificationCode != nil {
-		a, createError := core.CreateAccountWithVerificationCode(
-			createAccountRequest.Email,
-			*createAccountRequest.VerificationCode,
-			createAccountRequest.Password)
-		if createError != nil {
-			createError.GinHandler(c)
-			return
-		}
-		c.JSON(http.StatusCreated, AccountBackward(*a))
-		return
-	}
 	middleware.IsRoot(c, func(_ *gin.Context, _ api.Account) {
 		var createAccountRequest api.CreateAccountRequest
 		err := c.ShouldBindJSON(&createAccountRequest)

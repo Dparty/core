@@ -3,9 +3,9 @@ package controllers
 import (
 	"strings"
 
-	api "gitea.svc.boardware.com/bwc/core-api"
+	api "github.com/Dparty/core-api"
 
-	"gitea.svc.boardware.com/bwc/common/utils"
+	"github.com/Dparty/common/utils"
 
 	"github.com/gin-gonic/gin"
 )

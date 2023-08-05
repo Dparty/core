@@ -3,11 +3,11 @@ package services
 import (
 	"net/http"
 
-	"gitea.svc.boardware.com/bwc/model/core"
+	"github.com/Dparty/model/core"
 
-	"gitea.svc.boardware.com/bwc/common/errors"
+	"github.com/Dparty/common/errors"
 
-	"gitea.svc.boardware.com/bwc/common/constants"
+	"github.com/Dparty/common/constants"
 )
 
 func ServiceBackward(service core.Service) Service {

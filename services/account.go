@@ -3,10 +3,10 @@ package services
 import (
 	"time"
 
-	"gitea.svc.boardware.com/bwc/common/constants"
-	"gitea.svc.boardware.com/bwc/common/errors"
-	"gitea.svc.boardware.com/bwc/common/utils"
-	"gitea.svc.boardware.com/bwc/model/core"
+	"github.com/Dparty/common/constants"
+	"github.com/Dparty/common/errors"
+	"github.com/Dparty/common/utils"
+	"github.com/Dparty/model/core"
 )
 
 const EXPIRED_TIME = 60 * 5
@@ -108,16 +108,4 @@ func GetAccountById(id uint) *Account {
 func GetAccountByEmail(email string) {
 	var account core.Account
 	DB.First(&account, "email = ?", email)
-}
-
-func CreateAccountWithVerificationCode(email, code, password string) (*Account, *errors.Error) {
-	verificationCode := GetVerification(email, constants.CREATE_ACCOUNT)
-	if verificationCode != nil {
-		verificationCode.Tries++
-		DB.Save(&verificationCode)
-	}
-	if verificationCode == nil || verificationCode.Code != code || time.Now().Unix()-verificationCode.CreatedAt.Unix() > EXPIRED_TIME || verificationCode.Tries > 10 {
-		return nil, errors.VerificationCodeError()
-	}
-	return CreateAccount(email, password, constants.USER)
 }
