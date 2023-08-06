@@ -46,18 +46,10 @@ func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestauran
 
 func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request api.PutItemRequest) {
 	middleware.IsRoot(ctx, func(c *gin.Context, account api.Account) {
-		var properties restaurant.ItemProperties
-		for _, p := range request.Properties {
-			properties = append(properties, restaurant.ItemProperty{
-				Label:  p.Label,
-				Values: p.Values,
-			})
-		}
 		services.CreateItem(utils.StringToUint(account.Id), utils.StringToUint(restaurantId),
 			restaurant.Item{
-				Name:       request.Name,
-				Pricing:    request.Pricing,
-				Properties: properties,
+				Name:    request.Name,
+				Pricing: request.Pricing,
 			})
 	})
 }
