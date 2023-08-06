@@ -3,8 +3,8 @@ module github.com/Dparty/core
 go 1.20
 
 require (
-	github.com/Dparty/core-api v0.0.0-20230806023723-bdaa11876090
-	github.com/Dparty/model v0.0.0-20230805100331-3b625802c523
+	github.com/Dparty/core-api v0.0.0-20230806084920-e6154dc54848
+	github.com/Dparty/model v0.0.0-20230806081127-de1a29b592c9
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
 	gorm.io/gorm v1.25.2

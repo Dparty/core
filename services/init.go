@@ -5,6 +5,7 @@ import (
 
 	"github.com/Dparty/model"
 	"github.com/Dparty/model/core"
+	"github.com/Dparty/model/restaurant"
 	"github.com/spf13/viper"
 
 	"gorm.io/gorm"
@@ -30,5 +31,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	DB.AutoMigrate(&restaurant.Item{})
+	DB.AutoMigrate(&restaurant.Restaurant{})
 	DB.AutoMigrate(&core.Account{})
 }

@@ -5,6 +5,7 @@ import (
 
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
+	restaurant "github.com/Dparty/model/restaurant"
 
 	"github.com/Dparty/common/utils"
 )
@@ -49,5 +50,12 @@ func PaginationBackward(pagination core.Pagination) api.Pagination {
 		Index: pagination.Index,
 		Limit: pagination.Limit,
 		Total: pagination.Total,
+	}
+}
+
+func RestaurantBackward(restaurant restaurant.Restaurant) api.Restaurant {
+	return api.Restaurant{
+		Name:        restaurant.Name,
+		Description: restaurant.Description,
 	}
 }

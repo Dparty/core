@@ -7,6 +7,7 @@ import (
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
 	"github.com/Dparty/model/core"
+	"gorm.io/gorm"
 )
 
 const EXPIRED_TIME = 60 * 5
@@ -28,7 +29,9 @@ type Session struct {
 
 func (a Account) Forward() core.Account {
 	return core.Account{
-		ID:    a.ID,
+		Model: gorm.Model{
+			ID: a.ID,
+		},
 		Email: a.Email,
 		Role:  a.Role,
 	}
