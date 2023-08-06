@@ -45,5 +45,6 @@ docker run -d -it \
 ```
 
 ```bash
-docker run -dp 8080:8080 --mount type=bind,source="$(pwd)"/.env.yaml,target=/app/.env.yaml chenyunda218/core
+sudo docker pull chenyunda218/core
+sudo docker run -dp 8080:8080 --name core --mount type=bind,source="$(pwd)"/.env.yaml,target=/app/.env.yaml chenyunda218/core
 ```
