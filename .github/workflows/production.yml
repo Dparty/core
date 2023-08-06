@@ -1,4 +1,4 @@
-name: ci
+name: Production
 
 on:
   workflow_dispatch:
