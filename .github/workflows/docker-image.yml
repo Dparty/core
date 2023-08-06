@@ -34,7 +34,9 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             sudo docker pull chenyunda218/core
-            sudo docker run -dp 8080:8080 --name core --mount type=bind,source="$(pwd)"/.env.yaml,target=/app/.env.yaml chenyunda218/core
+            sudo docker stop core-uat
+            sudo docker rm core-uat
+            sudo docker run -dp 8080:8080 --name core-uat --mount type=bind,source="$(pwd)"/uat.env.yaml,target=/app/.env.yaml chenyunda218/core
   production:
     runs-on: ubuntu-latest
     steps:
@@ -47,4 +49,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             sudo docker pull chenyunda218/core
+            sudo docker pull
             sudo docker run -dp 8081:8080 --name core --mount type=bind,source="$(pwd)"/.env.yaml,target=/app/.env.yaml chenyunda218/core
