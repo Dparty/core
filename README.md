@@ -1,21 +1,8 @@
-# BoardWare cloud core
+# Dpary
 
 ## Configuration
 
 Example
-
-```yaml
-database:
-  host: 127.0.0.1
-  user: boardware
-  port: 3306
-  password: boardware
-  database: boardware_cloud_dev
-server:
-  port: 8080
-jwt:
-  secret: boardwaresecret
-```
 
 ## Generate model from openapi
 
@@ -58,4 +45,8 @@ GOPRIVATE=github.com/Dparty go get -u -f github.com/Dparty/core
 docker run -d -it \
    --mount type=bind,source="$(pwd)"/.env.yaml,target=/.env.yaml,readonly \
    core
+```
+
+```bash
+docker run -dp 8080:8080 --mount type=bind,source="$(pwd)"/.env.yaml,target=/app/.env.yaml warm:0.0.1
 ```
