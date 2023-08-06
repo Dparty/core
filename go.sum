@@ -44,6 +44,8 @@ github.com/Dparty/common v0.0.0-20230806034043-0d8612d21b6a h1:LjJrG/4WFKPLAe14K
 github.com/Dparty/common v0.0.0-20230806034043-0d8612d21b6a/go.mod h1:+MLshJLl9DpMWyEurFxVKTWHkemq8WmUGGnhiUXGKlE=
 github.com/Dparty/core-api v0.0.0-20230805095338-dbf478e28f44 h1:SqcU5cgqQzbWHCytOkgaY0GQ7/mnZ+NI8MAaEwPWKi0=
 github.com/Dparty/core-api v0.0.0-20230805095338-dbf478e28f44/go.mod h1:q/AacvzIhUV9Lm2RtO7bf+ieL6fMUmYiB987Q8unNUY=
+github.com/Dparty/core-api v0.0.0-20230806023723-bdaa11876090 h1:FRqgpC5RgX/qAYedfLn3REj//ROPCjRXIxUdf3JxOiU=
+github.com/Dparty/core-api v0.0.0-20230806023723-bdaa11876090/go.mod h1:q/AacvzIhUV9Lm2RtO7bf+ieL6fMUmYiB987Q8unNUY=
 github.com/Dparty/model v0.0.0-20230805100331-3b625802c523 h1:P0xwuZAG0IOGk5uTAqSnIJai+iPE/AmZerMGQITQDEw=
 github.com/Dparty/model v0.0.0-20230805100331-3b625802c523/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
 github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=

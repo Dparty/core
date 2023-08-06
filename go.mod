@@ -3,7 +3,7 @@ module github.com/Dparty/core
 go 1.20
 
 require (
-	github.com/Dparty/core-api v0.0.0-20230805095338-dbf478e28f44
+	github.com/Dparty/core-api v0.0.0-20230806023723-bdaa11876090
 	github.com/Dparty/model v0.0.0-20230805100331-3b625802c523
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0

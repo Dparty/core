@@ -3,7 +3,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o /docker-gs-ping
+RUN go build -o /main
 EXPOSE 8080
 # Run
-CMD ["/docker-gs-ping"]
+CMD ["/main"]

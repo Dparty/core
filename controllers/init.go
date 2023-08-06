@@ -12,6 +12,7 @@ func Init() {
 	router = gin.Default()
 	router.Use(server.CorsMiddleware())
 	api.AccountApiInterfaceMounter(router, accountApi)
+	api.RestaurantApiInterfaceMounter(router, restaurantApi)
 }
 
 func Run(addr ...string) {
