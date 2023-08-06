@@ -1,0 +1,19 @@
+name: ci
+
+on:
+  workflow_dispatch:
+jobs:
+  production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Production
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo docker pull chenyunda218/core
+            sudo docker pull
+            sudo docker run -dp 8081:8080 --name core-prd --mount type=bind,source="$(pwd)"/.env.yaml,target=/app/.env.yaml chenyunda218/core
