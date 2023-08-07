@@ -5,7 +5,6 @@ import (
 
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
-	"github.com/Dparty/model/common"
 	"github.com/Dparty/model/restaurant"
 )
 
@@ -74,10 +73,8 @@ func UploadItemImage(id uint) string {
 	DB.Find(&item, id)
 	imageId := utils.GenerteId()
 	path := "items/" + utils.UintToString(imageId)
-	url := fmt.Sprint("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
-	item.Images.Data = append(item.Images.Data, common.ObjectStorage{
-		Provider: common.COS,
-		Url:      url,
-	})
+	url := fmt.Sprintf("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
+	item.Images = append(item.Images, url)
+	DB.Save(&item)
 	return CosClient.CreatePresignedURL(Bucket, path)
 }
