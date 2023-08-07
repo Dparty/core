@@ -1,31 +1,12 @@
 package controllers
 
 import (
-	"reflect"
-
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
 	restaurant "github.com/Dparty/model/restaurant"
 
 	"github.com/Dparty/common/utils"
 )
-
-func Converter(f any) any {
-	typeOfA := reflect.TypeOf(f)
-	switch typeOfA.PkgPath() {
-	case "github.com/boardware-cloud/controllers/model":
-		switch typeOfA.Name() {
-		}
-	case "github.com/boardware-cloud/services/core":
-		switch typeOfA.Name() {
-		case "Account":
-			return AccountBackward(f.(core.Account))
-		case "Session":
-			return SessionBackward(f.(core.Session))
-		}
-	}
-	panic("No Converter")
-}
 
 func AccountBackward(account core.Account) api.Account {
 	return api.Account{
@@ -55,7 +36,61 @@ func PaginationBackward(pagination core.Pagination) api.Pagination {
 
 func RestaurantBackward(restaurant restaurant.Restaurant) api.Restaurant {
 	return api.Restaurant{
+		Id:          utils.UintToString(restaurant.ID),
 		Name:        restaurant.Name,
 		Description: restaurant.Description,
+	}
+}
+
+func ItemBackward(item restaurant.Item) api.Item {
+	var attributes []api.Attribute = make([]api.Attribute, 0)
+	for _, a := range item.Attributes {
+		attributes = append(attributes, AttributeBackward(a))
+	}
+	return api.Item{
+		Id:         utils.UintToString(item.ID),
+		Name:       item.Name,
+		Pricing:    item.Pricing,
+		Attributes: attributes,
+	}
+}
+
+func ItemForward(item api.PutItemRequest) restaurant.Item {
+	var attributes []restaurant.Attribute
+	for _, a := range item.Attributes {
+		attributes = append(attributes, AttributeForward(a))
+	}
+	return restaurant.Item{
+		Name:       item.Name,
+		Pricing:    item.Pricing,
+		Attributes: attributes,
+	}
+}
+
+func AttributeForward(attribute api.Attribute) restaurant.Attribute {
+	var options []restaurant.Option
+	for _, o := range attribute.Options {
+		options = append(options, restaurant.Option{
+			Label: o.Label,
+			Extra: o.Extra,
+		})
+	}
+	return restaurant.Attribute{
+		Label:   attribute.Label,
+		Options: options,
+	}
+}
+
+func AttributeBackward(attribute restaurant.Attribute) api.Attribute {
+	var options []api.Option
+	for _, o := range attribute.Options {
+		options = append(options, api.Option{
+			Label: o.Label,
+			Extra: o.Extra,
+		})
+	}
+	return api.Attribute{
+		Label:   attribute.Label,
+		Options: options,
 	}
 }

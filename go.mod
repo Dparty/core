@@ -3,8 +3,8 @@ module github.com/Dparty/core
 go 1.20
 
 require (
-	github.com/Dparty/core-api v0.0.0-20230806112116-f16969e8551a
-	github.com/Dparty/model v0.0.0-20230806081127-de1a29b592c9
+	github.com/Dparty/core-api v0.0.0-20230807021809-c3664e466427
+	github.com/Dparty/model v0.0.0-20230806112053-fa936f36f77a
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
 	gorm.io/gorm v1.25.2
@@ -14,6 +14,7 @@ require (
 	github.com/Dparty/common v0.0.0-20230806034043-0d8612d21b6a // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/sonic v1.10.0-rc3 // indirect
+	github.com/chenyunda218/golambda v0.0.0-20230804023307-0b6626011fb4 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -21,7 +22,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.14.1 // indirect
+	github.com/go-playground/validator/v10 v10.15.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
