@@ -3,7 +3,7 @@ module github.com/Dparty/core
 go 1.20
 
 require (
-	github.com/Dparty/common v0.0.0-20230807074925-dd59dd95efec
+	github.com/Dparty/common v0.0.0-20230807091545-42f83f70e987
 	github.com/Dparty/core-api v0.0.0-20230807075531-4a6708b42bff
 	github.com/Dparty/model v0.0.0-20230807082432-3bc3ce04f9a6
 	github.com/chenyunda218/golambda v0.0.0-20230804023307-0b6626011fb4

@@ -68,30 +68,18 @@ func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestauran
 }
 
 func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request api.PutItemRequest) {
-	middleware.GetAccount(ctx, func(c *gin.Context, account api.Account) {
-		id := utils.StringToUint(restaurantId)
-		restaurant, err := services.GetRestaurant(id)
-		if err != nil {
-			err.GinHandler(c)
-			return
-		}
-		if utils.StringToUint(account.Id) != restaurant.AccountId {
-			c.JSON(http.StatusNotAcceptable, gin.H{})
-			return
-		}
-		c.JSON(http.StatusCreated, ItemBackward(services.CreateItem(restaurant.ID, ItemForward(request))))
+	middleware.RestaurantOwner(ctx, restaurantId, func(ctx *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+		ctx.JSON(http.StatusCreated, ItemBackward(services.CreateItem(restaurant.ID, ItemForward(request))))
 	})
 }
 
 func (RestaurantApi) ListRestaurantItems(ctx *gin.Context, id string) {
-	middleware.GetAccount(ctx, func(c *gin.Context, account api.Account) {
-		c.JSON(http.StatusOK,
-			f.Map(services.ListRestaurantItems(
-				utils.StringToUint(id)),
-				func(_ int, item restaurant.Item) api.Item {
-					return ItemBackward(item)
-				}))
-	})
+	ctx.JSON(http.StatusOK,
+		f.Map(services.ListRestaurantItems(
+			utils.StringToUint(id)),
+			func(_ int, item restaurant.Item) api.Item {
+				return ItemBackward(item)
+			}))
 }
 
 func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
@@ -108,5 +96,15 @@ func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, id string) {
 }
 
 func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
-
+	middleware.GetAccount(ctx, func(ctx *gin.Context, account api.Account) {
+		itemId := utils.StringToUint(id)
+		item, err := services.GetItem(itemId)
+		if err != nil {
+			err.GinHandler(ctx)
+			return
+		}
+		middleware.RestaurantOwner(ctx, utils.UintToString(item.RestaurantId), func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+			ctx.JSON(http.StatusCreated, api.Uploading{Url: services.UploadItemImage(item.ID)})
+		})
+	})
 }
