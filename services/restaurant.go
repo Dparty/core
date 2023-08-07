@@ -47,6 +47,10 @@ func UpdateItem(id uint, item restaurant.Item) restaurant.Item {
 	return old
 }
 
+func DeleteItem(id uint) {
+	DB.Delete(&restaurant.Item{}, id)
+}
+
 func GetRestaurant(id uint) (restaurant.Restaurant, *errors.Error) {
 	var restaurant restaurant.Restaurant
 	ctx := DB.Find(&restaurant, id)
@@ -78,3 +82,5 @@ func UploadItemImage(id uint) string {
 	DB.Save(&item)
 	return CosClient.CreatePresignedURL(Bucket, path)
 }
+
+// func CreateTable(restaurantId uint, restaurant.Ta)

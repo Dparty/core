@@ -74,6 +74,8 @@ github.com/Dparty/core-api v0.0.0-20230807075531-4a6708b42bff h1:AQYGrnIFEFfN3tU
 github.com/Dparty/core-api v0.0.0-20230807075531-4a6708b42bff/go.mod h1:q/AacvzIhUV9Lm2RtO7bf+ieL6fMUmYiB987Q8unNUY=
 github.com/Dparty/core-api v0.0.0-20230807092015-53f68ce31a76 h1:rxSvDSg+z1vALiI3907FaGDtkC0jModrbJnM2t+EIVM=
 github.com/Dparty/core-api v0.0.0-20230807092015-53f68ce31a76/go.mod h1:q/AacvzIhUV9Lm2RtO7bf+ieL6fMUmYiB987Q8unNUY=
+github.com/Dparty/core-api v0.0.0-20230807095630-15654e5cb25f h1:mRUcdrDJ88/a+qEZK7h4fIo8EoKKgg9LZlRT0GiBTqw=
+github.com/Dparty/core-api v0.0.0-20230807095630-15654e5cb25f/go.mod h1:q/AacvzIhUV9Lm2RtO7bf+ieL6fMUmYiB987Q8unNUY=
 github.com/Dparty/model v0.0.0-20230805100331-3b625802c523 h1:P0xwuZAG0IOGk5uTAqSnIJai+iPE/AmZerMGQITQDEw=
 github.com/Dparty/model v0.0.0-20230805100331-3b625802c523/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
 github.com/Dparty/model v0.0.0-20230806070549-443b036b1e2a h1:CPnMWhJq2EMs712gezsAF/vZI30j8omPjk5gVBx6q3U=

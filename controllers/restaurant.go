@@ -30,8 +30,11 @@ func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
 	})
 }
 
-func (RestaurantApi) CreateTable(ctx *gin.Context, id string, gin_body api.PutTableRequest) {
-
+func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, gin_body api.PutTableRequest) {
+	middleware.RestaurantOwner(ctx, restaurantId,
+		func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+			// services.CreateTa
+		})
 }
 
 func (RestaurantApi) UpdateTable(ctx *gin.Context, id string, gin_body api.PutTableRequest) {
@@ -53,6 +56,24 @@ func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItem
 		}
 		item = services.UpdateItem(itemId, ItemForward(request))
 		c.JSON(http.StatusOK, ItemBackward(item))
+	})
+}
+
+func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
+	middleware.GetAccount(ctx, func(c *gin.Context, account api.Account) {
+		itemId := utils.StringToUint(id)
+		item, err := services.GetItem(itemId)
+		if err != nil {
+			err.GinHandler(c)
+			return
+		}
+		restaurant, _ := services.GetRestaurant(item.RestaurantId)
+		if utils.StringToUint(account.Id) != restaurant.AccountId {
+			c.JSON(http.StatusNotAcceptable, gin.H{})
+			return
+		}
+		services.DeleteItem(utils.StringToUint(id))
+		c.String(http.StatusNoContent, "")
 	})
 }
 
