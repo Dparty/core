@@ -105,5 +105,8 @@ func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 	})
 }
 func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, id string) {
+}
+
+func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 
 }

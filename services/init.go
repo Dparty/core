@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 
+	"github.com/Dparty/common/cloud"
 	"github.com/Dparty/model"
 	"github.com/Dparty/model/core"
 	"github.com/Dparty/model/restaurant"
@@ -12,6 +13,24 @@ import (
 )
 
 var DB *gorm.DB
+
+var CosClient cloud.CosClient
+var Bucket string
+
+func init() {
+	var err error
+	viper.SetConfigName(".env.yaml")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")   // optionally look for config in the working directory
+	err = viper.ReadInConfig() // Find and read the config file
+	if err != nil {            // Handle errors reading the config file
+		panic(fmt.Errorf("databases fatal error config file: %w", err))
+	}
+	Bucket = viper.GetString("cos.Bucket")
+	CosClient.Region = viper.GetString("cos.Region")
+	CosClient.SecretID = viper.GetString("cos.SecretID")
+	CosClient.SecretKey = viper.GetString("cos.SecretKey")
+}
 
 func init() {
 	var err error

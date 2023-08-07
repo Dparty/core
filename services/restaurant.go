@@ -1,8 +1,11 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
+	"github.com/Dparty/model/common"
 	"github.com/Dparty/model/restaurant"
 )
 
@@ -64,4 +67,17 @@ func ListRestaurantItems(id uint) []restaurant.Item {
 	var items []restaurant.Item = make([]restaurant.Item, 0)
 	DB.Where("restaurant_id = ?", id).Find(&items)
 	return items
+}
+
+func UploadItemImage(id uint) string {
+	var item restaurant.Item
+	DB.Find(&item, id)
+	imageId := utils.GenerteId()
+	path := "items/" + utils.UintToString(imageId)
+	url := fmt.Sprint("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
+	item.Images.Data = append(item.Images.Data, common.ObjectStorage{
+		Provider: common.COS,
+		Url:      url,
+	})
+	return CosClient.CreatePresignedURL(Bucket, path)
 }
