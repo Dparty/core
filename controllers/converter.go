@@ -61,7 +61,7 @@ func ItemBackward(item restaurant.Item) api.Item {
 }
 
 func ItemForward(item api.PutItemRequest) restaurant.Item {
-	var attributes []restaurant.Attribute
+	var attributes []restaurant.Attribute = make([]restaurant.Attribute, 0)
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeForward(a))
 	}
@@ -73,7 +73,7 @@ func ItemForward(item api.PutItemRequest) restaurant.Item {
 }
 
 func AttributeForward(attribute api.Attribute) restaurant.Attribute {
-	var options []restaurant.Option
+	var options []restaurant.Option = make([]restaurant.Option, 0)
 	for _, o := range attribute.Options {
 		options = append(options, restaurant.Option{
 			Label: o.Label,
@@ -87,7 +87,7 @@ func AttributeForward(attribute api.Attribute) restaurant.Attribute {
 }
 
 func AttributeBackward(attribute restaurant.Attribute) api.Attribute {
-	var options []api.Option
+	var options []api.Option = make([]api.Option, 0)
 	for _, o := range attribute.Options {
 		options = append(options, api.Option{
 			Label: o.Label,
