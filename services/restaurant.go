@@ -5,29 +5,27 @@ import (
 
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
-	"github.com/Dparty/model/restaurant"
+	model "github.com/Dparty/model/restaurant"
 )
 
-func CreateRestaurant(accountId uint, name, description string) (restaurant.Restaurant, *errors.Error) {
-	restaurant := restaurant.Restaurant{
+func CreateRestaurant(accountId uint, name, description string) (model.Restaurant, *errors.Error) {
+	restaurant := model.Restaurant{
 		Name:        name,
 		Description: description,
 	}
-	restaurant.ID = utils.GenerteId()
 	restaurant.AccountId = accountId
 	DB.Save(&restaurant)
 	return restaurant, nil
 }
 
-func CreateItem(restaurantId uint, item restaurant.Item) restaurant.Item {
+func CreateItem(restaurantId uint, item model.Item) model.Item {
 	item.RestaurantId = restaurantId
-	item.ID = utils.GenerteId()
 	DB.Save(&item)
 	return item
 }
 
-func GetItem(id uint) (restaurant.Item, *errors.Error) {
-	var item restaurant.Item
+func GetItem(id uint) (model.Item, *errors.Error) {
+	var item model.Item
 	ctx := DB.Find(&item, id)
 	if ctx.RowsAffected == 0 {
 		return item, errors.NotFoundError()
@@ -35,9 +33,9 @@ func GetItem(id uint) (restaurant.Item, *errors.Error) {
 	return item, nil
 }
 
-func UpdateItem(id uint, item restaurant.Item) restaurant.Item {
+func UpdateItem(id uint, item model.Item) model.Item {
 	item.ID = id
-	var old restaurant.Item
+	var old model.Item
 	DB.Find(&old, id)
 	old.ID = id
 	old.Name = item.Name
@@ -48,11 +46,11 @@ func UpdateItem(id uint, item restaurant.Item) restaurant.Item {
 }
 
 func DeleteItem(id uint) {
-	DB.Delete(&restaurant.Item{}, id)
+	DB.Delete(&model.Item{}, id)
 }
 
-func GetRestaurant(id uint) (restaurant.Restaurant, *errors.Error) {
-	var restaurant restaurant.Restaurant
+func GetRestaurant(id uint) (model.Restaurant, *errors.Error) {
+	var restaurant model.Restaurant
 	ctx := DB.Find(&restaurant, id)
 	if ctx.RowsAffected == 0 {
 		return restaurant, errors.NotFoundError()
@@ -60,20 +58,20 @@ func GetRestaurant(id uint) (restaurant.Restaurant, *errors.Error) {
 	return restaurant, nil
 }
 
-func ListRestaurants(accountId uint) []restaurant.Restaurant {
-	var restaurants []restaurant.Restaurant = make([]restaurant.Restaurant, 0)
+func ListRestaurants(accountId uint) []model.Restaurant {
+	var restaurants []model.Restaurant = make([]model.Restaurant, 0)
 	DB.Where("account_id = ?", accountId).Find(&restaurants)
 	return restaurants
 }
 
-func ListRestaurantItems(id uint) []restaurant.Item {
-	var items []restaurant.Item = make([]restaurant.Item, 0)
+func ListRestaurantItems(id uint) []model.Item {
+	var items []model.Item = make([]model.Item, 0)
 	DB.Where("restaurant_id = ?", id).Find(&items)
 	return items
 }
 
 func UploadItemImage(id uint) string {
-	var item restaurant.Item
+	var item model.Item
 	DB.Find(&item, id)
 	imageId := utils.GenerteId()
 	path := "items/" + utils.UintToString(imageId)
@@ -83,4 +81,15 @@ func UploadItemImage(id uint) string {
 	return CosClient.CreatePresignedURL(Bucket, path)
 }
 
-// func CreateTable(restaurantId uint, restaurant.Ta)
+func CreateTable(restaurantId uint, label string) bool {
+	table := &model.Table{
+		RestaurantId: restaurantId,
+		Label:        label,
+	}
+	ctx := DB.Find(&table)
+	if ctx.RowsAffected != 0 {
+		return false
+	}
+	DB.Save(&table)
+	return true
+}

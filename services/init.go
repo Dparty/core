@@ -53,4 +53,5 @@ func init() {
 	DB.AutoMigrate(&restaurant.Item{})
 	DB.AutoMigrate(&restaurant.Restaurant{})
 	DB.AutoMigrate(&core.Account{})
+	DB.AutoMigrate(&restaurant.Table{})
 }

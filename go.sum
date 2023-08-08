@@ -90,6 +90,10 @@ github.com/Dparty/model v0.0.0-20230807082432-3bc3ce04f9a6 h1:DTCzAzbsZfUmOK50mU
 github.com/Dparty/model v0.0.0-20230807082432-3bc3ce04f9a6/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
 github.com/Dparty/model v0.0.0-20230807092835-f0166b326947 h1:0oNcG1Y0gRfJObI0D93aqB61rD32OUuywbSQCxAvHZU=
 github.com/Dparty/model v0.0.0-20230807092835-f0166b326947/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
+github.com/Dparty/model v0.0.0-20230808011558-4a65f392a037 h1:ojPEliI+mB4oDiLWpcF4AjZLDMZQ7PDazrPPzzBcHiI=
+github.com/Dparty/model v0.0.0-20230808011558-4a65f392a037/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
+github.com/Dparty/model v0.0.0-20230808023624-6e881c110ac1 h1:fxqHuVhEVvJQn+2CUNitD2f0yyFHACGx3Ekq3CgU+zc=
+github.com/Dparty/model v0.0.0-20230808023624-6e881c110ac1/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
 github.com/QcloudApi/qcloud_sign_golang v0.0.0-20141224014652-e4130a326409/go.mod h1:1pk82RBxDY/JZnPQrtqHlUFfCctgdorsd9M06fMynOM=
 github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
 github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=

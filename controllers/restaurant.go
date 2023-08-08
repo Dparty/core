@@ -15,8 +15,11 @@ type RestaurantApi struct{}
 
 var restaurantApi RestaurantApi
 
-func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, id string, gin_body api.PutRestaurantRequest) {
-
+func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, gin_body api.PutRestaurantRequest) {
+	middleware.RestaurantOwner(ctx, restaurantId,
+		func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+			// services.CreateTa
+		})
 }
 
 func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
@@ -30,10 +33,17 @@ func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
 	})
 }
 
-func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, gin_body api.PutTableRequest) {
+func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, request api.PutTableRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
-			// services.CreateTa
+			ok := services.CreateTable(restaurant.ID, request.Label)
+			if ok {
+				c.JSON(http.StatusCreated, api.Table{
+					Label: request.Label,
+				})
+			} else {
+				c.String(http.StatusConflict, "")
+			}
 		})
 }
 
