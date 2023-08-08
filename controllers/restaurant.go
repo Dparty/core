@@ -116,7 +116,9 @@ func (RestaurantApi) ListRestaurantItems(ctx *gin.Context, id string) {
 func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 	middleware.GetAccount(ctx, func(c *gin.Context, account api.Account) {
 		restaurants := services.ListRestaurants(utils.StringToUint(account.Id))
-		var restauratnList api.RestaurantList
+		var restauratnList api.RestaurantList = api.RestaurantList{
+			Data: make([]api.Restaurant, 0),
+		}
 		for _, r := range restaurants {
 			restauratnList.Data = append(restauratnList.Data, RestaurantBackward(r))
 		}
