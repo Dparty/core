@@ -13,6 +13,9 @@ var router *gin.Engine
 func Init() {
 	router = gin.Default()
 	router.Use(server.CorsMiddleware())
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{})
+	})
 	router.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{})
 	})
