@@ -24,16 +24,15 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/core:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}:latest
       - name: Update docker
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
           script: |
-            sudo docker pull chenyunda218/core
-            sudo docker stop core-uat
-            sudo docker rm core-uat
-            sudo docker run -dp 8080:8080 --name core-uat --mount type=bind,source="$(pwd)"/uat.env.yaml,target=/app/.env.yaml chenyunda218/core
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}
+            sudo docker stop ${{ vars.DOCKER_NAME }}-uat
+            sudo docker rm ${{ vars.DOCKER_NAME }}-uat
+            sudo docker run -dp 8080:8080 --name ${{ vars.DOCKER_NAME }}-uat --mount type=bind,source="$(pwd)"/uat.env.yaml,target=/app/.env.yaml ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_NAME }}
