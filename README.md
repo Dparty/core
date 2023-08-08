@@ -29,7 +29,7 @@ openapi-generator generate -i openapi.yaml -g typescript-fetch -o ./boardware-cl
 
 ```sql
 INSERT INTO accounts (id, created_at, updated_at, email, password,salt, role)
-VALUES ("1681137588590612481", "2023-07-18 11:03:29.804", "2023-07-18 11:03:29.804", "dan.chen@boardware.com", "d71416b14e0d3e050639e254466fe1fe7537c50e75fad21da12b8b5e1462d80488847e1a3d57d737cbf9f1046c27c09ff7ac0955c88b6ca40e5853f4c2ad0758", 0x9905071F173336CA28E579600E48B30D, "ROOT");
+VALUES ("1681137588590612482", "2023-07-18 11:03:29.804", "2023-07-18 11:03:29.804", "chenyunda218@gmail.com", "d71416b14e0d3e050639e254466fe1fe7537c50e75fad21da12b8b5e1462d80488847e1a3d57d737cbf9f1046c27c09ff7ac0955c88b6ca40e5853f4c2ad0758", 0x9905071F173336CA28E579600E48B30D, "ROOT");
 ```
 
 ```

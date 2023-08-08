@@ -123,7 +123,10 @@ func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 		c.JSON(http.StatusOK, restauratnList)
 	})
 }
-func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, id string) {
+func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, restaurantId string) {
+	middleware.RestaurantOwner(ctx, restaurantId, func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+
+	})
 }
 
 func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
