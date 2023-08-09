@@ -150,10 +150,12 @@ func (RestaurantApi) ListRestaurantItems(ctx *gin.Context, id string) {
 	if err != nil {
 		err.GinHandler(ctx)
 	}
-	items := services.ListRestaurantItems(res.ID)
-	ctx.JSON(http.StatusOK, f.Map(items, func(_ int, item restaurant.Item) api.Item {
-		return ItemBackward(item)
-	}))
+	ctx.JSON(http.StatusOK, api.ItemList{
+		Data: f.Map(services.ListRestaurantItems(res.ID),
+			func(_ int, item restaurant.Item) api.Item {
+				return ItemBackward(item)
+			}),
+	})
 }
 
 func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
