@@ -6,7 +6,7 @@ require (
 	github.com/Dparty/common v0.0.0-20230807091545-42f83f70e987
 	github.com/Dparty/core-api v0.0.0-20230809024603-0d1c8c1d8577
 	github.com/Dparty/model v0.0.0-20230808023624-6e881c110ac1
-	github.com/chenyunda218/golambda v0.0.0-20230804023307-0b6626011fb4
+	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
 	gorm.io/gorm v1.25.2

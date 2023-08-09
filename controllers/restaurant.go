@@ -146,12 +146,14 @@ func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request a
 }
 
 func (RestaurantApi) ListRestaurantItems(ctx *gin.Context, id string) {
-	ctx.JSON(http.StatusOK,
-		f.Map(services.ListRestaurantItems(
-			utils.StringToUint(id)),
-			func(_ int, item restaurant.Item) api.Item {
-				return ItemBackward(item)
-			}))
+	res, err := services.GetRestaurant(utils.StringToUint(id))
+	if err != nil {
+		err.GinHandler(ctx)
+	}
+	items := services.ListRestaurantItems(res.ID)
+	ctx.JSON(http.StatusOK, f.Map(items, func(_ int, item restaurant.Item) api.Item {
+		return ItemBackward(item)
+	}))
 }
 
 func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
