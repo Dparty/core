@@ -15,10 +15,15 @@ type RestaurantApi struct{}
 
 var restaurantApi RestaurantApi
 
-func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, gin_body api.PutRestaurantRequest) {
+func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, request api.PutRestaurantRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
-			// services.CreateTa
+			newRestaurant, err := services.UpdateRestaurant(utils.StringToUint(restaurantId), request.Name, *request.Description)
+			if err != nil {
+				err.GinHandler(c)
+				return
+			}
+			c.JSON(http.StatusOK, RestaurantBackward(newRestaurant))
 		})
 }
 
@@ -36,10 +41,10 @@ func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
 func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, request api.PutTableRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
-			ok := services.CreateTable(restaurant.ID, request.Label)
-			if ok {
+			if table := services.CreateTable(restaurant.ID, request.Label); table != nil {
 				c.JSON(http.StatusCreated, api.Table{
-					Label: request.Label,
+					Id:    utils.UintToString(table.ID),
+					Label: table.Label,
 				})
 			} else {
 				c.String(http.StatusConflict, "")
@@ -49,6 +54,33 @@ func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, request 
 
 func (RestaurantApi) UpdateTable(ctx *gin.Context, id string, gin_body api.PutTableRequest) {
 
+}
+
+func (RestaurantApi) DeleteTable(ctx *gin.Context, id string) {
+	middleware.GetAccount(ctx, func(ctx *gin.Context, account api.Account) {
+		var table restaurant.Table
+		services.DB.Find(&table, utils.StringToUint(id))
+		middleware.RestaurantOwner(ctx, utils.UintToString(table.RestaurantId),
+			func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+				services.DB.Delete(&table)
+			})
+	})
+}
+
+func (RestaurantApi) ListRestaurantTable(ctx *gin.Context, restaurantId string) {
+	tables, err := services.ListRestaurantTable(utils.StringToUint(restaurantId))
+	if err != nil {
+		err.GinHandler(ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, api.TableList{
+		Data: f.Reference(f.Map(tables, func(_ int, table restaurant.Table) api.Table {
+			return api.Table{
+				Id:    utils.UintToString(table.ID),
+				Label: table.Label,
+			}
+		})),
+	})
 }
 
 func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItemRequest) {
@@ -85,6 +117,15 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 		services.DeleteItem(utils.StringToUint(id))
 		c.String(http.StatusNoContent, "")
 	})
+}
+
+func (RestaurantApi) GetItem(ctx *gin.Context, id string) {
+	item, err := services.GetItem(utils.StringToUint(id))
+	if err != nil {
+		err.GinHandler(ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, ItemBackward(item))
 }
 
 func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestaurantRequest) {
@@ -126,8 +167,12 @@ func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 	})
 }
 func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, restaurantId string) {
-	middleware.RestaurantOwner(ctx, restaurantId, func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
-
+	middleware.RestaurantOwner(ctx, restaurantId, func(ctx *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+		if err := services.DeleteRestaurant(utils.StringToUint(restaurantId)); err != nil {
+			err.GinHandler(ctx)
+			return
+		}
+		ctx.JSON(http.StatusNoContent, "")
 	})
 }
 

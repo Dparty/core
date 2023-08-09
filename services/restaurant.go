@@ -18,6 +18,27 @@ func CreateRestaurant(accountId uint, name, description string) (model.Restauran
 	return restaurant, nil
 }
 
+func UpdateRestaurant(restaurantId uint, name, description string) (model.Restaurant, *errors.Error) {
+	var restaurant model.Restaurant
+	DB.First(&restaurant, restaurantId)
+	restaurant.Name = name
+	restaurant.Description = description
+	ctx := DB.Save(&restaurant)
+	if ctx.RowsAffected == 0 {
+		return restaurant, errors.NotFoundError()
+	}
+	return restaurant, nil
+}
+
+func DeleteRestaurant(id uint) *errors.Error {
+	restaurant, err := GetRestaurant(id)
+	if err != nil {
+		return err
+	}
+	DB.Delete(&restaurant)
+	return nil
+}
+
 func CreateItem(restaurantId uint, item model.Item) model.Item {
 	item.RestaurantId = restaurantId
 	DB.Save(&item)
@@ -81,15 +102,24 @@ func UploadItemImage(id uint) string {
 	return CosClient.CreatePresignedURL(Bucket, path)
 }
 
-func CreateTable(restaurantId uint, label string) bool {
+func CreateTable(restaurantId uint, label string) *model.Table {
 	table := &model.Table{
 		RestaurantId: restaurantId,
 		Label:        label,
 	}
-	ctx := DB.Find(&table)
+	ctx := DB.Where("restaurant_id = ? AND label = ?", restaurantId, label).Find(&table)
 	if ctx.RowsAffected != 0 {
-		return false
+		return nil
 	}
 	DB.Save(&table)
-	return true
+	return table
+}
+
+func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
+	var tables []model.Table = make([]model.Table, 0)
+	if _, err := GetRestaurant(restaurantId); err != nil {
+		return tables, err
+	}
+	DB.Where("restaurant_id = ?", restaurantId).Find(&tables)
+	return tables, nil
 }

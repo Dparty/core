@@ -47,7 +47,7 @@ func ItemBackward(item restaurant.Item) api.Item {
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeBackward(a))
 	}
-	var images []string
+	var images []string = make([]string, 0)
 	for _, image := range item.Images {
 		images = append(images, image)
 	}

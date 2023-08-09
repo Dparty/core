@@ -74,6 +74,22 @@ func CreateSession(email, password string) (*Session, *errors.Error) {
 	}, nil
 }
 
+func UpdatePassword(accountId uint, oldPassword, newPassword string) *errors.Error {
+	var account core.Account
+	ctx := DB.First(&account, accountId)
+	if ctx.RowsAffected == 0 {
+		return errors.NotFoundError()
+	}
+	if !utils.PasswordsMatch(account.Password, oldPassword, account.Salt) {
+		return errors.AuthenticationError()
+	}
+	hashed, salt := utils.HashWithSalt(newPassword)
+	account.Password = hashed
+	account.Salt = salt
+	DB.Save(&account)
+	return nil
+}
+
 func CreateAccount(email, password string, role constants.Role) (*Account, *errors.Error) {
 	var accounts []core.Account
 	DB.Find(&accounts, "email = ?", email)
