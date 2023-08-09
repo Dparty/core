@@ -85,6 +85,9 @@ func (RestaurantApi) ListRestaurantTable(ctx *gin.Context, restaurantId string) 
 
 func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItemRequest) {
 	middleware.GetAccount(ctx, func(c *gin.Context, account api.Account) {
+		if request.Pricing < 0 {
+			ctx.String(http.StatusBadRequest, "")
+		}
 		itemId := utils.StringToUint(id)
 		item, err := services.GetItem(itemId)
 		if err != nil {
@@ -141,6 +144,9 @@ func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestauran
 
 func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request api.PutItemRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId, func(ctx *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
+		if request.Pricing < 0 {
+			ctx.String(http.StatusBadRequest, "")
+		}
 		ctx.JSON(http.StatusCreated, ItemBackward(services.CreateItem(restaurant.ID, ItemForward(request))))
 	})
 }
