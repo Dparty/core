@@ -1,11 +1,17 @@
 package services
 
 import (
+	"context"
 	"fmt"
+	"mime/multipart"
+	"net/http"
+	"net/url"
+	"os"
 
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
 	model "github.com/Dparty/model/restaurant"
+	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
 func CreateRestaurant(accountId uint, name, description string) (model.Restaurant, *errors.Error) {
@@ -91,15 +97,40 @@ func ListRestaurantItems(id uint) []model.Item {
 	return items
 }
 
-func UploadItemImage(id uint) string {
+func GetFileContentType(ouput *os.File) (string, error) {
+	buf := make([]byte, 512)
+	_, err := ouput.Read(buf)
+	if err != nil {
+		return "", err
+	}
+	contentType := http.DetectContentType(buf)
+	return contentType, nil
+}
+
+func UploadItemImage(id uint, file *multipart.FileHeader) string {
 	var item model.Item
 	DB.Find(&item, id)
 	imageId := utils.GenerteId()
 	path := "items/" + utils.UintToString(imageId)
+	u, _ := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", Bucket, CosClient.Region))
+	b := &cos.BaseURL{BucketURL: u}
+	client := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  CosClient.SecretID,
+			SecretKey: CosClient.SecretKey,
+		},
+	})
+	f, _ := file.Open()
+	client.Object.Put(context.Background(), path, f,
+		&cos.ObjectPutOptions{
+			ObjectPutHeaderOptions: &cos.ObjectPutHeaderOptions{
+				ContentType: file.Header.Get("content-type"),
+			},
+		})
 	url := fmt.Sprintf("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
 	item.Images = append(item.Images, url)
 	DB.Save(&item)
-	return CosClient.CreatePresignedURL(Bucket, path)
+	return url
 }
 
 func CreateTable(restaurantId uint, label string) *model.Table {

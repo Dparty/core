@@ -195,7 +195,8 @@ func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 			return
 		}
 		middleware.RestaurantOwner(ctx, utils.UintToString(item.RestaurantId), func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
-			ctx.JSON(http.StatusCreated, api.Uploading{Url: services.UploadItemImage(item.ID)})
+			file, _ := c.FormFile("file")
+			ctx.JSON(http.StatusCreated, api.Uploading{Url: services.UploadItemImage(item.ID, file)})
 		})
 	})
 }
