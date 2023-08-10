@@ -112,11 +112,7 @@ func UploadItemImage(id uint, file *multipart.FileHeader) string {
 	DB.Find(&item, id)
 	imageId := utils.GenerteId()
 	path := "items/" + utils.UintToString(imageId)
-	u, err := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", Bucket, CosClient.Region))
-	if err != nil {
-		fmt.Println(1, err)
-		return ""
-	}
+	u, _ := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", Bucket, CosClient.Region))
 	b := &cos.BaseURL{BucketURL: u}
 	client := cos.NewClient(b, &http.Client{
 		Transport: &cos.AuthorizationTransport{
@@ -124,21 +120,13 @@ func UploadItemImage(id uint, file *multipart.FileHeader) string {
 			SecretKey: CosClient.SecretKey,
 		},
 	})
-	f, err := file.Open()
-	if err != nil {
-		fmt.Println(2, err)
-		return ""
-	}
-	_, err = client.Object.Put(context.Background(), path, f,
+	f, _ := file.Open()
+	_, _ = client.Object.Put(context.Background(), path, f,
 		&cos.ObjectPutOptions{
 			ObjectPutHeaderOptions: &cos.ObjectPutHeaderOptions{
 				ContentType: file.Header.Get("content-type"),
 			},
 		})
-	if err != nil {
-		fmt.Println(3, err)
-		return ""
-	}
 	url := fmt.Sprintf("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
 	item.Images = append(item.Images, url)
 	DB.Save(&item)
