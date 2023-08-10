@@ -1,14 +1,17 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
 	model "github.com/Dparty/model/restaurant"
+	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
 func CreateRestaurant(accountId uint, name, description string) (model.Restaurant, *errors.Error) {
@@ -109,21 +112,33 @@ func UploadItemImage(id uint, file *multipart.FileHeader) string {
 	DB.Find(&item, id)
 	imageId := utils.GenerteId()
 	path := "items/" + utils.UintToString(imageId)
-	// u, _ := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", Bucket, CosClient.Region))
-	// b := &cos.BaseURL{BucketURL: u}
-	// client := cos.NewClient(b, &http.Client{
-	// 	Transport: &cos.AuthorizationTransport{
-	// 		SecretID:  CosClient.SecretID,
-	// 		SecretKey: CosClient.SecretKey,
-	// 	},
-	// })
-	// f, _ := file.Open()
-	// client.Object.Put(context.Background(), path, f,
-	// 	&cos.ObjectPutOptions{
-	// 		ObjectPutHeaderOptions: &cos.ObjectPutHeaderOptions{
-	// 			ContentType: file.Header.Get("content-type"),
-	// 		},
-	// 	})
+	u, err := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", Bucket, CosClient.Region))
+	if err != nil {
+		fmt.Println(1, err)
+		return ""
+	}
+	b := &cos.BaseURL{BucketURL: u}
+	client := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  CosClient.SecretID,
+			SecretKey: CosClient.SecretKey,
+		},
+	})
+	f, err := file.Open()
+	if err != nil {
+		fmt.Println(2, err)
+		return ""
+	}
+	_, err = client.Object.Put(context.Background(), path, f,
+		&cos.ObjectPutOptions{
+			ObjectPutHeaderOptions: &cos.ObjectPutHeaderOptions{
+				ContentType: file.Header.Get("content-type"),
+			},
+		})
+	if err != nil {
+		fmt.Println(3, err)
+		return ""
+	}
 	url := fmt.Sprintf("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
 	item.Images = append(item.Images, url)
 	DB.Save(&item)
