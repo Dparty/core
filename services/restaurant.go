@@ -68,6 +68,7 @@ func UpdateItem(id uint, item model.Item) model.Item {
 	old.Name = item.Name
 	old.Pricing = item.Pricing
 	old.Attributes = item.Attributes
+	old.Images = item.Images
 	DB.Save(&old)
 	return old
 }

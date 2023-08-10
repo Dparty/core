@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/Dparty/common v0.0.0-20230807091545-42f83f70e987
-	github.com/Dparty/core-api v0.0.0-20230809040411-73f8818bf528
+	github.com/Dparty/core-api v0.0.0-20230810062635-1ab641e7b273
 	github.com/Dparty/model v0.0.0-20230808023624-6e881c110ac1
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
