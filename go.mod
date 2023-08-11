@@ -4,17 +4,18 @@ go 1.20
 
 require (
 	github.com/Dparty/common v0.0.0-20230807091545-42f83f70e987
-	github.com/Dparty/core-api v0.0.0-20230810062635-1ab641e7b273
-	github.com/Dparty/model v0.0.0-20230808023624-6e881c110ac1
+	github.com/Dparty/core-api v0.0.0-20230811081953-94477414b859
+	github.com/Dparty/model v0.0.0-20230811080946-9832b605ab15
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
-	gorm.io/gorm v1.25.2
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.42
+	gorm.io/gorm v1.25.3
 )
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
-	github.com/bytedance/sonic v1.10.0-rc3 // indirect
+	github.com/bytedance/sonic v1.10.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
@@ -46,7 +47,6 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
-	github.com/tencentyun/cos-go-sdk-v5 v0.7.42 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.4.0 // indirect

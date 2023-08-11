@@ -19,7 +19,7 @@ var restaurantApi RestaurantApi
 func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, request api.PutRestaurantRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant) {
-			newRestaurant, err := services.UpdateRestaurant(utils.StringToUint(restaurantId), request.Name, *request.Description)
+			newRestaurant, err := services.UpdateRestaurant(utils.StringToUint(restaurantId), request.Name, request.Description, request.Tags)
 			if err != nil {
 				err.GinHandler(c)
 				return
@@ -134,11 +134,7 @@ func (RestaurantApi) GetItem(ctx *gin.Context, id string) {
 
 func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestaurantRequest) {
 	middleware.IsRoot(ctx, func(c *gin.Context, account api.Account) {
-		description := ""
-		if request.Description != nil {
-			description = *request.Description
-		}
-		restaurant, _ := services.CreateRestaurant(utils.StringToUint(account.Id), request.Name, description)
+		restaurant, _ := services.CreateRestaurant(utils.StringToUint(account.Id), request.Name, request.Description, request.Tags)
 		c.JSON(http.StatusCreated, RestaurantBackward(restaurant))
 	})
 }

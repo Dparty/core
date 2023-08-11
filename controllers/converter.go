@@ -3,7 +3,7 @@ package controllers
 import (
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
-	restaurant "github.com/Dparty/model/restaurant"
+	restaurantapi "github.com/Dparty/model/restaurant"
 
 	"github.com/Dparty/common/utils"
 )
@@ -34,15 +34,20 @@ func PaginationBackward(pagination core.Pagination) api.Pagination {
 	}
 }
 
-func RestaurantBackward(restaurant restaurant.Restaurant) api.Restaurant {
+func RestaurantBackward(restaurant restaurantapi.Restaurant) api.Restaurant {
+	var tags []string = make([]string, 0)
+	if len(restaurant.Tags) != 0 {
+		tags = restaurant.Tags
+	}
 	return api.Restaurant{
 		Id:          utils.UintToString(restaurant.ID),
 		Name:        restaurant.Name,
 		Description: restaurant.Description,
+		Tags:        tags,
 	}
 }
 
-func ItemBackward(item restaurant.Item) api.Item {
+func ItemBackward(item restaurantapi.Item) api.Item {
 	var attributes []api.Attribute = make([]api.Attribute, 0)
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeBackward(a))
@@ -51,42 +56,48 @@ func ItemBackward(item restaurant.Item) api.Item {
 	for _, image := range item.Images {
 		images = append(images, image)
 	}
+	var tags []string = make([]string, 0)
+	if len(item.Tags) != 0 {
+		tags = item.Tags
+	}
 	return api.Item{
 		Id:         utils.UintToString(item.ID),
 		Name:       item.Name,
 		Pricing:    item.Pricing,
 		Attributes: attributes,
-		Images:     &images,
+		Images:     images,
+		Tags:       tags,
 	}
 }
 
-func ItemForward(item api.PutItemRequest) restaurant.Item {
-	var attributes []restaurant.Attribute = make([]restaurant.Attribute, 0)
+func ItemForward(item api.PutItemRequest) restaurantapi.Item {
+	var attributes []restaurantapi.Attribute = make([]restaurantapi.Attribute, 0)
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeForward(a))
 	}
-	return restaurant.Item{
+	return restaurantapi.Item{
 		Name:       item.Name,
 		Pricing:    item.Pricing,
 		Attributes: attributes,
+		Tags:       item.Tags,
 	}
 }
 
-func AttributeForward(attribute api.Attribute) restaurant.Attribute {
-	var options []restaurant.Option = make([]restaurant.Option, 0)
+func AttributeForward(attribute api.Attribute) restaurantapi.Attribute {
+	var options []restaurantapi.Option = make([]restaurantapi.Option, 0)
 	for _, o := range attribute.Options {
-		options = append(options, restaurant.Option{
+		options = append(options, restaurantapi.Option{
 			Label: o.Label,
 			Extra: o.Extra,
 		})
 	}
-	return restaurant.Attribute{
+	return restaurantapi.Attribute{
 		Label:   attribute.Label,
 		Options: options,
 	}
 }
 
-func AttributeBackward(attribute restaurant.Attribute) api.Attribute {
+func AttributeBackward(attribute restaurantapi.Attribute) api.Attribute {
 	var options []api.Option = make([]api.Option, 0)
 	for _, o := range attribute.Options {
 		options = append(options, api.Option{

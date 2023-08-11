@@ -10,25 +10,28 @@ import (
 
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
+	"github.com/Dparty/model/common"
 	model "github.com/Dparty/model/restaurant"
 	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
-func CreateRestaurant(accountId uint, name, description string) (model.Restaurant, *errors.Error) {
+func CreateRestaurant(accountId uint, name, description string, tags []string) (model.Restaurant, *errors.Error) {
 	restaurant := model.Restaurant{
 		Name:        name,
 		Description: description,
+		Tags:        common.StringForward(tags),
 	}
 	restaurant.AccountId = accountId
 	DB.Save(&restaurant)
 	return restaurant, nil
 }
 
-func UpdateRestaurant(restaurantId uint, name, description string) (model.Restaurant, *errors.Error) {
+func UpdateRestaurant(restaurantId uint, name, description string, tags []string) (model.Restaurant, *errors.Error) {
 	var restaurant model.Restaurant
 	DB.First(&restaurant, restaurantId)
 	restaurant.Name = name
 	restaurant.Description = description
+	restaurant.Tags = common.StringForward(tags)
 	ctx := DB.Save(&restaurant)
 	if ctx.RowsAffected == 0 {
 		return restaurant, errors.NotFoundError()
@@ -69,6 +72,7 @@ func UpdateItem(id uint, item model.Item) model.Item {
 	old.Pricing = item.Pricing
 	old.Attributes = item.Attributes
 	old.Images = item.Images
+	old.Tags = item.Tags
 	DB.Save(&old)
 	return old
 }
