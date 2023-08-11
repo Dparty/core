@@ -2,7 +2,6 @@ package controllers
 
 import (
 	api "github.com/Dparty/core-api"
-	"github.com/Dparty/core/services"
 	core "github.com/Dparty/core/services"
 
 	"github.com/Dparty/common/errors"
@@ -103,7 +102,7 @@ func (a AccountApi) VerifySession(c *gin.Context, sessionVerificationRequest api
 
 func (a AccountApi) UpdatePassword(c *gin.Context, request api.UpdatePasswordRequest) {
 	middleware.GetAccount(c, func(c *gin.Context, account api.Account) {
-		if err := services.UpdatePassword(utils.StringToUint(account.Id), request.Password, request.NewPassword); err != nil {
+		if err := core.UpdatePassword(utils.StringToUint(account.Id), request.Password, request.NewPassword); err != nil {
 			err.GinHandler(c)
 			return
 		}
