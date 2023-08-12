@@ -159,3 +159,13 @@ func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
 	DB.Where("restaurant_id = ?", restaurantId).Find(&tables)
 	return tables, nil
 }
+
+func CreateBill(tableId uint) *errors.Error {
+	var table model.Table
+	if ctx := DB.Find(&table, tableId); ctx.RowsAffected == 0 {
+		return errors.NotFoundError()
+	}
+	label := table.Label
+	fmt.Println(label)
+	return nil
+}

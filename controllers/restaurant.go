@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Dparty/common/utils"
@@ -199,5 +198,5 @@ func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 }
 
 func (RestaurantApi) CreateBill(ctx *gin.Context, id string, request api.CreateBillRequest) {
-	fmt.Println(request)
+	services.CreateBill(utils.StringToUint(id))
 }
