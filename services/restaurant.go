@@ -10,7 +10,6 @@ import (
 
 	"github.com/Dparty/common/errors"
 	"github.com/Dparty/common/utils"
-	"github.com/Dparty/model/common"
 	model "github.com/Dparty/model/restaurant"
 	"github.com/tencentyun/cos-go-sdk-v5"
 )
@@ -19,7 +18,6 @@ func CreateRestaurant(accountId uint, name, description string, tags []string) (
 	restaurant := model.Restaurant{
 		Name:        name,
 		Description: description,
-		Tags:        common.StringForward(tags),
 	}
 	restaurant.AccountId = accountId
 	DB.Save(&restaurant)
@@ -31,7 +29,6 @@ func UpdateRestaurant(restaurantId uint, name, description string, tags []string
 	DB.First(&restaurant, restaurantId)
 	restaurant.Name = name
 	restaurant.Description = description
-	restaurant.Tags = common.StringForward(tags)
 	ctx := DB.Save(&restaurant)
 	if ctx.RowsAffected == 0 {
 		return restaurant, errors.NotFoundError()
@@ -151,6 +148,12 @@ func CreateTable(restaurantId uint, label string) *model.Table {
 	return table
 }
 
+func GetTable(id uint) model.Table {
+	var table model.Table
+	DB.Find(&table, id)
+	return table
+}
+
 func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
 	var tables []model.Table = make([]model.Table, 0)
 	if _, err := GetRestaurant(restaurantId); err != nil {
@@ -160,12 +163,47 @@ func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
 	return tables, nil
 }
 
-func CreateBill(tableId uint) *errors.Error {
+func CreateBill(tableId uint, items []model.Item) *errors.Error {
 	var table model.Table
 	if ctx := DB.Find(&table, tableId); ctx.RowsAffected == 0 {
 		return errors.NotFoundError()
 	}
-	label := table.Label
-	fmt.Println(label)
+
+	fmt.Println(tableId, table, items)
+	return nil
+}
+
+func CreatePrinter(printer model.Printer) (model.Printer, *errors.Error) {
+	if ctx := DB.Where("sn = ?", printer.Sn).Find(&model.Printer{}); ctx.RowsAffected != 0 {
+		return model.Printer{}, errors.PrinterSnDuplecateError()
+	}
+	DB.Save(&printer)
+	return printer, nil
+}
+
+func UpdatePrinter(id uint, printer model.Printer) model.Printer {
+	printer.ID = id
+	DB.Save(&printer)
+	return printer
+}
+
+func ListPrinters(restaurantId uint) []model.Printer {
+	var printers []model.Printer
+	DB.Where("restaurant_id = ?", restaurantId).Find(&printers)
+	return printers
+}
+
+func GetPrinter(id uint) model.Printer {
+	var printer model.Printer
+	DB.Where("id = ?", id).Find(&printer)
+	return printer
+}
+
+func DeletePrinter(id uint) *errors.Error {
+	printer := GetPrinter(id)
+	ctx := DB.Delete(&printer)
+	if ctx.RowsAffected == 0 {
+		return errors.NotFoundError()
+	}
 	return nil
 }

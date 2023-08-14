@@ -36,9 +36,9 @@ func PaginationBackward(pagination core.Pagination) api.Pagination {
 
 func RestaurantBackward(restaurant restaurantapi.Restaurant) api.Restaurant {
 	var tags []string = make([]string, 0)
-	if len(restaurant.Tags) != 0 {
-		tags = restaurant.Tags
-	}
+	// if len(restaurant.Tags) != 0 {
+	// 	tags = restaurant.Tags
+	// }
 	return api.Restaurant{
 		Id:          utils.UintToString(restaurant.ID),
 		Name:        restaurant.Name,

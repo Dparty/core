@@ -3,9 +3,9 @@ module github.com/Dparty/core
 go 1.20
 
 require (
-	github.com/Dparty/common v0.0.0-20230807091545-42f83f70e987
-	github.com/Dparty/core-api v0.0.0-20230811081953-94477414b859
-	github.com/Dparty/model v0.0.0-20230811080946-9832b605ab15
+	github.com/Dparty/common v0.0.0-20230814081334-bd5b0fc5d28d
+	github.com/Dparty/core-api v0.0.0-20230814084343-71a1263398ec
+	github.com/Dparty/model v0.0.0-20230814093646-4df071007fd1
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
@@ -14,6 +14,7 @@ require (
 )
 
 require (
+	github.com/Dparty/feieyun v0.0.0-20230814084703-cd30455ad0f3 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/sonic v1.10.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect

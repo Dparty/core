@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Dparty/common/cloud"
+	"github.com/Dparty/feieyun"
 	"github.com/Dparty/model"
 	"github.com/Dparty/model/core"
 	"github.com/Dparty/model/restaurant"
@@ -16,6 +17,22 @@ var DB *gorm.DB
 
 var CosClient cloud.CosClient
 var Bucket string
+var BillPrinter feieyun.Printer
+
+func init() {
+	var err error
+	viper.SetConfigName(".env.yaml")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")   // optionally look for config in the working directory
+	err = viper.ReadInConfig() // Find and read the config file
+	if err != nil {            // Handle errors reading the config file
+		panic(fmt.Errorf("databases fatal error config file: %w", err))
+	}
+	user := viper.GetString("feieyun.user")
+	ukey := viper.GetString("feieyun.ukey")
+	url := viper.GetString("feieyun.url")
+	BillPrinter = feieyun.NewPrinter(user, ukey, url)
+}
 
 func init() {
 	var err error
@@ -50,8 +67,9 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	DB.AutoMigrate(&restaurant.Item{})
-	DB.AutoMigrate(&restaurant.Restaurant{})
 	DB.AutoMigrate(&core.Account{})
+	DB.AutoMigrate(&restaurant.Restaurant{})
+	DB.AutoMigrate(&restaurant.Item{})
+	DB.AutoMigrate(&restaurant.Printer{})
 	DB.AutoMigrate(&restaurant.Table{})
 }
