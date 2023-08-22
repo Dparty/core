@@ -72,4 +72,5 @@ func init() {
 	DB.AutoMigrate(&restaurant.Item{})
 	DB.AutoMigrate(&restaurant.Printer{})
 	DB.AutoMigrate(&restaurant.Table{})
+	DB.AutoMigrate(&restaurant.Bill{})
 }

@@ -45,10 +45,37 @@ func DeleteRestaurant(id uint) *errors.Error {
 	return nil
 }
 
-func CreateItem(restaurantId uint, item model.Item) model.Item {
+func validItem(item model.Item) bool {
+	var attributes map[string]bool = make(map[string]bool)
+	for _, attribute := range item.Attributes {
+		_, ok := attributes[attribute.Label]
+		if ok {
+			return false
+		}
+		var options map[string]bool = make(map[string]bool)
+		for _, option := range attribute.Options {
+			_, ok := options[option.Label]
+			if ok {
+				return false
+			}
+			options[option.Label] = true
+		}
+		attributes[attribute.Label] = true
+	}
+	return true
+}
+
+func CreateItem(restaurantId uint, item model.Item) (model.Item, *errors.Error) {
 	item.RestaurantId = restaurantId
+	if !validItem(item) {
+		return model.Item{}, &errors.Error{
+			StatusCode: 400,
+			Code:       4000,
+			Message:    "重複屬性",
+		}
+	}
 	DB.Save(&item)
-	return item
+	return item, nil
 }
 
 func GetItem(id uint) (model.Item, *errors.Error) {
@@ -60,7 +87,12 @@ func GetItem(id uint) (model.Item, *errors.Error) {
 	return item, nil
 }
 
-func UpdateItem(id uint, item model.Item) model.Item {
+// func GetOrderItem(id uint, options model.Options) (model.Order, *errors.Error) {
+// 	item, err := GetItem(id)
+// 	return model.Order{Name: item.Name, Pricing: item.Pricing}, err
+// }
+
+func UpdateItem(id uint, item model.Item) (model.Item, *errors.Error) {
 	item.ID = id
 	var old model.Item
 	DB.Find(&old, id)
@@ -70,8 +102,16 @@ func UpdateItem(id uint, item model.Item) model.Item {
 	old.Attributes = item.Attributes
 	old.Images = item.Images
 	old.Tags = item.Tags
+	old.Printers = item.Printers
+	if !validItem(item) {
+		return old, &errors.Error{
+			StatusCode: 400,
+			Code:       4000,
+			Message:    "重複屬性",
+		}
+	}
 	DB.Save(&old)
-	return old
+	return old, nil
 }
 
 func DeleteItem(id uint) {
@@ -123,14 +163,14 @@ func UploadItemImage(id uint, file *multipart.FileHeader) string {
 		},
 	})
 	f, _ := file.Open()
-	_, _ = client.Object.Put(context.Background(), path, f,
+	client.Object.Put(context.Background(), path, f,
 		&cos.ObjectPutOptions{
 			ObjectPutHeaderOptions: &cos.ObjectPutHeaderOptions{
 				ContentType: file.Header.Get("content-type"),
 			},
 		})
 	url := fmt.Sprintf("https://%s.cos.%s.myqcloud.com/%s", Bucket, CosClient.Region, path)
-	item.Images = append(item.Images, url)
+	item.Images = []string{url}
 	DB.Save(&item)
 	return url
 }
@@ -163,14 +203,39 @@ func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
 	return tables, nil
 }
 
-func CreateBill(tableId uint, items []model.Item) *errors.Error {
-	var table model.Table
-	if ctx := DB.Find(&table, tableId); ctx.RowsAffected == 0 {
-		return errors.NotFoundError()
+func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model.Order, *errors.Error) {
+	item, err := GetItem(itemId)
+	var options model.Options = make(model.Options, 0)
+	if item.RestaurantId != restaurantId {
+		return model.Order{}, errors.NotFoundError()
 	}
+	for k, v := range optionsMap {
+		option, err := item.Attributes.GetOption(k, v)
+		if err != nil {
+			return model.Order{}, errors.NotFoundError()
+		}
+		options = append(options, option)
+	}
+	return model.Order{
+		Item:    item,
+		Options: options,
+	}, err
+}
 
-	fmt.Println(tableId, table, items)
-	return nil
+func CreateBill(table model.Table, orders model.Orders) (model.Bill, *errors.Error) {
+	var lastBill model.Bill
+	ctx := DB.Where("restaurant_id = ?", table.RestaurantId).Order("created_at DESC").Find(&lastBill)
+	var pickUpCode int64 = 0
+	if ctx.RowsAffected != 0 {
+		pickUpCode = (lastBill.PickUpCode + 1) % 1000
+	}
+	bill := model.Bill{RestaurantId: table.RestaurantId, Orders: orders, TableLabel: table.Label, PickUpCode: pickUpCode}
+	DB.Save(&bill)
+	return bill, nil
+}
+
+func PrintBill(bill model.Bill, reprint bool) {
+
 }
 
 func CreatePrinter(printer model.Printer) (model.Printer, *errors.Error) {

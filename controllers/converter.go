@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"github.com/Dparty/common/utils"
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
-	restaurantapi "github.com/Dparty/model/restaurant"
-
-	"github.com/Dparty/common/utils"
+	model "github.com/Dparty/model/restaurant"
+	f "github.com/chenyunda218/golambda"
 )
 
 func AccountBackward(account core.Account) api.Account {
@@ -34,11 +34,8 @@ func PaginationBackward(pagination core.Pagination) api.Pagination {
 	}
 }
 
-func RestaurantBackward(restaurant restaurantapi.Restaurant) api.Restaurant {
+func RestaurantBackward(restaurant model.Restaurant) api.Restaurant {
 	var tags []string = make([]string, 0)
-	// if len(restaurant.Tags) != 0 {
-	// 	tags = restaurant.Tags
-	// }
 	return api.Restaurant{
 		Id:          utils.UintToString(restaurant.ID),
 		Name:        restaurant.Name,
@@ -47,7 +44,7 @@ func RestaurantBackward(restaurant restaurantapi.Restaurant) api.Restaurant {
 	}
 }
 
-func ItemBackward(item restaurantapi.Item) api.Item {
+func ItemBackward(item model.Item) api.Item {
 	var attributes []api.Attribute = make([]api.Attribute, 0)
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeBackward(a))
@@ -67,37 +64,43 @@ func ItemBackward(item restaurantapi.Item) api.Item {
 		Attributes: attributes,
 		Images:     images,
 		Tags:       tags,
+		Printers: f.Map(item.Printers, func(_ int, s uint) string {
+			return utils.UintToString(s)
+		}),
 	}
 }
 
-func ItemForward(item api.PutItemRequest) restaurantapi.Item {
-	var attributes []restaurantapi.Attribute = make([]restaurantapi.Attribute, 0)
+func ItemForward(item api.PutItemRequest) model.Item {
+	var attributes []model.Attribute = make([]model.Attribute, 0)
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeForward(a))
 	}
-	return restaurantapi.Item{
+	return model.Item{
 		Name:       item.Name,
 		Pricing:    item.Pricing,
 		Attributes: attributes,
 		Tags:       item.Tags,
+		Printers: f.Map(item.Printers, func(_ int, printer string) uint {
+			return utils.StringToUint(printer)
+		}),
 	}
 }
 
-func AttributeForward(attribute api.Attribute) restaurantapi.Attribute {
-	var options []restaurantapi.Option = make([]restaurantapi.Option, 0)
+func AttributeForward(attribute api.Attribute) model.Attribute {
+	var options []model.Option = make([]model.Option, 0)
 	for _, o := range attribute.Options {
-		options = append(options, restaurantapi.Option{
+		options = append(options, model.Option{
 			Label: o.Label,
 			Extra: o.Extra,
 		})
 	}
-	return restaurantapi.Attribute{
+	return model.Attribute{
 		Label:   attribute.Label,
 		Options: options,
 	}
 }
 
-func AttributeBackward(attribute restaurantapi.Attribute) api.Attribute {
+func AttributeBackward(attribute model.Attribute) api.Attribute {
 	var options []api.Option = make([]api.Option, 0)
 	for _, o := range attribute.Options {
 		options = append(options, api.Option{
@@ -108,5 +111,14 @@ func AttributeBackward(attribute restaurantapi.Attribute) api.Attribute {
 	return api.Attribute{
 		Label:   attribute.Label,
 		Options: options,
+	}
+}
+func PrinterBackward(printer model.Printer) api.Printer {
+	return api.Printer{
+		Id:          utils.UintToString(printer.ID),
+		Name:        printer.Name,
+		Description: printer.Description,
+		Type:        api.PrinterType(printer.Type),
+		Sn:          printer.Sn,
 	}
 }

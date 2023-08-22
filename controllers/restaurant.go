@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Dparty/common/utils"
@@ -104,7 +103,11 @@ func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItem
 				c.JSON(http.StatusNotAcceptable, gin.H{})
 				return
 			}
-			item = services.UpdateItem(itemId, ItemForward(request))
+			item, err = services.UpdateItem(itemId, ItemForward(request))
+			if err != nil {
+				err.GinHandler(c)
+				return
+			}
 			c.JSON(http.StatusOK, ItemBackward(item))
 		})
 }
@@ -148,10 +151,16 @@ func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestauran
 func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request api.PutItemRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(ctx *gin.Context, account api.Account, restaurant model.Restaurant) {
+			item, err := services.CreateItem(restaurant.ID, ItemForward(request))
+			if err != nil {
+				err.GinHandler(ctx)
+				return
+			}
 			if request.Pricing < 0 {
 				ctx.String(http.StatusBadRequest, "")
+				return
 			}
-			ctx.JSON(http.StatusCreated, ItemBackward(services.CreateItem(restaurant.ID, ItemForward(request))))
+			ctx.JSON(http.StatusCreated, ItemBackward(item))
 		})
 }
 
@@ -172,7 +181,6 @@ func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 	middleware.GetAccount(ctx,
 		func(c *gin.Context, account api.Account) {
 			restaurants := services.ListRestaurants(utils.StringToUint(account.Id))
-			fmt.Println(account)
 			var restauratnList api.RestaurantList = api.RestaurantList{
 				Data: make([]api.Restaurant, 0),
 			}
@@ -212,25 +220,30 @@ func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 }
 
 func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.CreateBillRequest) {
-	var items []model.Item
+	table := services.GetTable(utils.StringToUint(tableId))
 	if len(request.Orders) == 0 {
 		ctx.JSON(http.StatusBadRequest, "")
 		return
 	}
-	for _, order := range request.Orders {
-		item, err := services.GetItem(utils.StringToUint(order.Item.Id))
-		if err != nil {
-			err.GinHandler(ctx)
-			return
-		}
-		items = append(items, item)
-	}
-
-	err := services.CreateBill(utils.StringToUint(tableId), items)
+	restaurant, err := services.GetRestaurant(table.RestaurantId)
 	if err != nil {
 		err.GinHandler(ctx)
 		return
 	}
+	var orders model.Orders = make(model.Orders, 0)
+	for _, order := range request.Orders {
+		var pairs map[string]string = make(map[string]string)
+		for _, p := range order.Options {
+			pairs[p.Left] = p.Right
+		}
+		order, err := services.CreateOrder(restaurant.ID, utils.StringToUint(order.Item.Id), pairs)
+		if err != nil {
+			err.GinHandler(ctx)
+			return
+		}
+		orders = append(orders, order)
+	}
+	services.CreateBill(table, orders)
 }
 
 func (RestaurantApi) CreatePrinter(c *gin.Context, id string, request api.PutPrinterRequest) {
@@ -241,6 +254,7 @@ func (RestaurantApi) CreatePrinter(c *gin.Context, id string, request api.PutPri
 				Sn:           request.Sn,
 				Name:         request.Name,
 				Description:  request.Description,
+				Type:         model.PrinterType(request.Type),
 			})
 			if err != nil {
 				err.GinHandler(c)
@@ -261,12 +275,7 @@ func (RestaurantApi) ListPrinters(c *gin.Context, id string) {
 			c.JSON(http.StatusOK, api.PrinterList{
 				Data: f.Map(services.ListPrinters(restaurant.ID),
 					func(_ int, printer model.Printer) api.Printer {
-						return api.Printer{
-							Id:          utils.UintToString(printer.ID),
-							Name:        printer.Name,
-							Description: printer.Description,
-							Sn:          printer.Sn,
-						}
+						return PrinterBackward(printer)
 					}),
 			})
 		})
@@ -282,8 +291,10 @@ func (RestaurantApi) UpdatePrinter(c *gin.Context, id string, request api.PutPri
 						Name:        request.Name,
 						Description: request.Description,
 						Sn:          request.Sn,
+						Type:        model.PrinterType(request.Type),
 					}
-					services.UpdatePrinter(utils.StringToUint(id), printer)
+					p := services.UpdatePrinter(utils.StringToUint(id), printer)
+					c.JSON(http.StatusOK, PrinterBackward(p))
 				})
 		})
 }

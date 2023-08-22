@@ -4,13 +4,13 @@ go 1.20
 
 require (
 	github.com/Dparty/common v0.0.0-20230814081334-bd5b0fc5d28d
-	github.com/Dparty/core-api v0.0.0-20230814084343-71a1263398ec
-	github.com/Dparty/model v0.0.0-20230814093646-4df071007fd1
+	github.com/Dparty/core-api v0.0.0-20230822065859-fe91067f5756
+	github.com/Dparty/model v0.0.0-20230822090126-394dc00947e9
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.42
-	gorm.io/gorm v1.25.3
+	gorm.io/gorm v1.25.4
 )
 
 require (
@@ -25,7 +25,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.15.0 // indirect
+	github.com/go-playground/validator/v10 v10.15.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
