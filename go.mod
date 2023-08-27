@@ -14,7 +14,7 @@ require (
 )
 
 require (
-	github.com/Dparty/feieyun v0.0.0-20230814084703-cd30455ad0f3 // indirect
+	github.com/Dparty/feieyun v0.0.0-20230827101249-075e5b35f584 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/sonic v1.10.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect

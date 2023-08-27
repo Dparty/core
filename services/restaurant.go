@@ -229,13 +229,51 @@ func CreateBill(table model.Table, orders model.Orders) (model.Bill, *errors.Err
 	if ctx.RowsAffected != 0 {
 		pickUpCode = (lastBill.PickUpCode + 1) % 1000
 	}
-	bill := model.Bill{RestaurantId: table.RestaurantId, Orders: orders, TableLabel: table.Label, PickUpCode: pickUpCode}
+	bill := model.Bill{RestaurantId: table.RestaurantId,
+		Orders: orders, TableLabel: table.Label,
+		PickUpCode: pickUpCode}
 	DB.Save(&bill)
+	PrintBill(bill, table, false)
 	return bill, nil
 }
 
-func PrintBill(bill model.Bill, reprint bool) {
-
+func PrintBill(bill model.Bill, table model.Table, reprint bool) {
+	var printers []model.Printer
+	DB.Where("restaurant_id = ?", table.RestaurantId).Find(&printers)
+	content := ""
+	content += "<CB>和食</CB><BR>"
+	content += fmt.Sprintf("<C><L><B>餐號: A%d</B></L></C>", bill.PickUpCode)
+	content += fmt.Sprintf("<C><L><B>桌號: %s</B></L></C>", table.Label)
+	content += "--------------------------------<BR>"
+	var printersString map[uint]string = make(map[uint]string)
+	for _, order := range bill.Orders {
+		content += fmt.Sprintf("%s %.2f<BR>", order.Item.Name, float64(order.Item.Pricing)/100)
+		attributes := ""
+		for _, option := range order.Options {
+			attributes += fmt.Sprintf("  |--   %s +%.2f<BR>", option.Label, float64(option.Extra)/100)
+		}
+		content += attributes
+		for _, printer := range order.Item.Printers {
+			_, ok := printersString[printer]
+			if !ok {
+				printersString[printer] = fmt.Sprintf("<C><L><B>桌號: %s</B></L></C><BR>", table.Label)
+				printersString[printer] += fmt.Sprintf("<C><L><B>A%d</B></L></C><BR>", bill.PickUpCode)
+			}
+			printersString[printer] += order.Item.Name + "<BR>"
+			printersString[printer] += attributes
+		}
+	}
+	for k, v := range printersString {
+		foodPrinter := GetPrinter(k)
+		BillPrinter.Print(foodPrinter.Sn, v)
+	}
+	content += "--------------------------------<BR>"
+	content += fmt.Sprintf("合計:%.2f元<BR>", float64(bill.Total())/100)
+	for _, printer := range printers {
+		if printer.Type == "BILL" {
+			BillPrinter.Print(printer.Sn, content)
+		}
+	}
 }
 
 func CreatePrinter(printer model.Printer) (model.Printer, *errors.Error) {
