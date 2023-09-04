@@ -236,7 +236,7 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 		for _, p := range order.Options {
 			pairs[p.Left] = p.Right
 		}
-		order, err := services.CreateOrder(restaurant.ID, utils.StringToUint(order.Item.Id), pairs)
+		order, err := services.CreateOrder(restaurant.ID, utils.StringToUint(order.ItemId), pairs)
 		if err != nil {
 			err.GinHandler(ctx)
 			return
