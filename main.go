@@ -1,14 +1,16 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/Dparty/core/controllers"
 	"github.com/Dparty/core/services"
-	_ "github.com/Dparty/core/services"
 )
 
 func main() {
 	// var err error
-	services.UpdatePasswordForce(1681137588590612482, "hello")
+	err := services.UpdatePasswordForce(1681137588590612482, "hello")
+	fmt.Println(err)
 	// viper.SetConfigName(".env") // name of config file (without extension)
 	// viper.SetConfigType("yaml")
 	// viper.AddConfigPath(".")   // optionally look for config in the working directory
