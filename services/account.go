@@ -90,6 +90,19 @@ func UpdatePassword(accountId uint, oldPassword, newPassword string) *errors.Err
 	return nil
 }
 
+func UpdatePasswordForce(accountId uint, newPassword string) *errors.Error {
+	var account core.Account
+	ctx := DB.First(&account, accountId)
+	if ctx.RowsAffected == 0 {
+		return errors.NotFoundError()
+	}
+	hashed, salt := utils.HashWithSalt(newPassword)
+	account.Password = hashed
+	account.Salt = salt
+	DB.Save(&account)
+	return nil
+}
+
 func CreateAccount(email, password string, role constants.Role) (*Account, *errors.Error) {
 	var accounts []core.Account
 	DB.Find(&accounts, "email = ?", email)
