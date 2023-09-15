@@ -28,15 +28,12 @@ func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, req
 }
 
 func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
-	middleware.GetAccount(ctx,
-		func(c *gin.Context, account api.Account) {
-			restaurant, err := services.GetRestaurant(utils.StringToUint(id))
-			if err != nil {
-				err.GinHandler(ctx)
-				return
-			}
-			ctx.JSON(http.StatusOK, RestaurantBackward(restaurant))
-		})
+	restaurant, err := services.GetRestaurant(utils.StringToUint(id))
+	if err != nil {
+		err.GinHandler(ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, RestaurantBackward(restaurant))
 }
 
 func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, request api.PutTableRequest) {
