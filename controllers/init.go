@@ -19,6 +19,12 @@ func Init() {
 	router.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{})
 	})
+	router.POST("/feieyun", func(ctx *gin.Context) {
+
+	})
+	router.GET("/feieyun/feieyun_verify_3E6TRJ5g81bCsdZI.txt", func(ctx *gin.Context) {
+		ctx.String(http.StatusOK, "3E6TRJ5g81bCsdZI")
+	})
 	api.AccountApiInterfaceMounter(router, accountApi)
 	api.RestaurantApiInterfaceMounter(router, restaurantApi)
 }
