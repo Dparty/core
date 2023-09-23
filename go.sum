@@ -130,6 +130,8 @@ github.com/Dparty/feieyun v0.0.0-20230827081846-1ecfce2c4e87 h1:9iCjeoU7pIW6msDZ
 github.com/Dparty/feieyun v0.0.0-20230827081846-1ecfce2c4e87/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
 github.com/Dparty/feieyun v0.0.0-20230827101249-075e5b35f584 h1:4UREpwQTIOfvSOJor23pJ8ZWtgFm2UM4fBknXOlJZxo=
 github.com/Dparty/feieyun v0.0.0-20230827101249-075e5b35f584/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
+github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820 h1:TqRKzaKRmJISJ97qS8QRA+wF6OE1R+IEVBEU/EsWKm8=
+github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
 github.com/Dparty/model v0.0.0-20230805100331-3b625802c523 h1:P0xwuZAG0IOGk5uTAqSnIJai+iPE/AmZerMGQITQDEw=
 github.com/Dparty/model v0.0.0-20230805100331-3b625802c523/go.mod h1:IMcA5w5BcFRdn5JY6I0EGWS2keyBqoiNzdokoXUnNAg=
 github.com/Dparty/model v0.0.0-20230806070549-443b036b1e2a h1:CPnMWhJq2EMs712gezsAF/vZI30j8omPjk5gVBx6q3U=

@@ -265,13 +265,13 @@ func PrintBill(bill model.Bill, table model.Table, reprint bool) {
 	}
 	for k, v := range printersString {
 		foodPrinter := GetPrinter(k)
-		BillPrinter.Print(foodPrinter.Sn, v)
+		BillPrinter.Print(foodPrinter.Sn, v, "https://ordering-api-uat.sum-foods.com/feieyun/callback")
 	}
 	content += "--------------------------------<BR>"
 	content += fmt.Sprintf("合計:%.2f元<BR>", float64(bill.Total())/100)
 	for _, printer := range printers {
 		if printer.Type == "BILL" {
-			BillPrinter.Print(printer.Sn, content)
+			BillPrinter.Print(printer.Sn, content, "https://ordering-api-uat.sum-foods.com/feieyun/callback")
 		}
 	}
 }
