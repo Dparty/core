@@ -33,7 +33,7 @@ func Init() {
 			ctx.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
-		fmt.Println(feieyunCallback)
+		fmt.Println(feieyunCallback.Status)
 		ctx.JSON(200, gin.H{"data": "info.A "})
 	})
 	router.GET("/feieyun/feieyun_verify_3E6TRJ5g81bCsdZI.txt", func(ctx *gin.Context) {
