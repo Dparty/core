@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"github.com/Dparty/common/errors"
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
-
-	"github.com/Dparty/common/errors"
+	model "github.com/Dparty/model/core"
 
 	"github.com/Dparty/common/constants"
 
@@ -32,7 +32,7 @@ func (AccountApi) CreateSession(c *gin.Context, createSessionRequest api.CreateS
 }
 
 func (AccountApi) CreateAccount(c *gin.Context, createAccountRequest api.CreateAccountRequest) {
-	middleware.IsRoot(c, func(_ *gin.Context, _ api.Account) {
+	middleware.IsRoot(c, func(_ *gin.Context, _ model.Account) {
 		var createAccountRequest api.CreateAccountRequest
 		err := c.ShouldBindJSON(&createAccountRequest)
 		if err != nil {
@@ -101,11 +101,12 @@ func (a AccountApi) VerifySession(c *gin.Context, sessionVerificationRequest api
 }
 
 func (a AccountApi) UpdatePassword(c *gin.Context, request api.UpdatePasswordRequest) {
-	middleware.GetAccount(c, func(c *gin.Context, account api.Account) {
-		if err := core.UpdatePassword(utils.StringToUint(account.Id), request.Password, request.NewPassword); err != nil {
-			err.GinHandler(c)
-			return
-		}
-		c.String(http.StatusNoContent, "")
-	})
+	middleware.GetAccount(c,
+		func(c *gin.Context, account model.Account) {
+			if err := core.UpdatePassword(account.ID, request.Password, request.NewPassword); err != nil {
+				err.GinHandler(c)
+				return
+			}
+			c.String(http.StatusNoContent, "")
+		})
 }

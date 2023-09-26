@@ -22,19 +22,19 @@ func Init() {
 	router = gin.Default()
 	router.Use(server.CorsMiddleware())
 	router.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{})
+		ctx.JSON(http.StatusOK, "")
 	})
 	router.GET("/health", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{})
+		ctx.JSON(http.StatusOK, "")
 	})
 	router.POST("/feieyun/callback", func(ctx *gin.Context) {
 		var feieyunCallback FeieyunCallback
 		if err := ctx.ShouldBind(&feieyunCallback); err != nil {
-			ctx.JSON(400, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 		fmt.Println(feieyunCallback.Status)
-		ctx.JSON(200, gin.H{"data": "info.A "})
+		ctx.JSON(http.StatusOK, gin.H{"data": "info.A "})
 	})
 	router.GET("/feieyun/feieyun_verify_3E6TRJ5g81bCsdZI.txt", func(ctx *gin.Context) {
 		ctx.Header("Content-Type", "text/plain")

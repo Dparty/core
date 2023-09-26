@@ -6,8 +6,6 @@ import (
 	"github.com/Dparty/common/cloud"
 	"github.com/Dparty/feieyun"
 	"github.com/Dparty/model"
-	"github.com/Dparty/model/core"
-	"github.com/Dparty/model/restaurant"
 	"github.com/spf13/viper"
 
 	"gorm.io/gorm"
@@ -23,9 +21,9 @@ func init() {
 	var err error
 	viper.SetConfigName(".env.yaml")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")   // optionally look for config in the working directory
-	err = viper.ReadInConfig() // Find and read the config file
-	if err != nil {            // Handle errors reading the config file
+	viper.AddConfigPath(".")
+	err = viper.ReadInConfig()
+	if err != nil {
 		panic(fmt.Errorf("databases fatal error config file: %w", err))
 	}
 	user := viper.GetString("feieyun.user")
@@ -38,9 +36,9 @@ func init() {
 	var err error
 	viper.SetConfigName(".env.yaml")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")   // optionally look for config in the working directory
-	err = viper.ReadInConfig() // Find and read the config file
-	if err != nil {            // Handle errors reading the config file
+	viper.AddConfigPath(".")
+	err = viper.ReadInConfig()
+	if err != nil {
 		panic(fmt.Errorf("databases fatal error config file: %w", err))
 	}
 	Bucket = viper.GetString("cos.Bucket")
@@ -53,9 +51,9 @@ func init() {
 	var err error
 	viper.SetConfigName(".env.yaml")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")   // optionally look for config in the working directory
-	err = viper.ReadInConfig() // Find and read the config file
-	if err != nil {            // Handle errors reading the config file
+	viper.AddConfigPath(".")
+	err = viper.ReadInConfig()
+	if err != nil {
 		panic(fmt.Errorf("databases fatal error config file: %w", err))
 	}
 	user := viper.GetString("database.user")
@@ -67,10 +65,5 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	DB.AutoMigrate(&core.Account{})
-	DB.AutoMigrate(&restaurant.Restaurant{})
-	DB.AutoMigrate(&restaurant.Item{})
-	DB.AutoMigrate(&restaurant.Printer{})
-	DB.AutoMigrate(&restaurant.Table{})
-	DB.AutoMigrate(&restaurant.Bill{})
+	model.Init(DB)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/Dparty/common/utils"
 	api "github.com/Dparty/core-api"
 	"github.com/Dparty/core/services"
+	core "github.com/Dparty/model/core"
 	model "github.com/Dparty/model/restaurant"
 	f "github.com/chenyunda218/golambda"
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ var restaurantApi RestaurantApi
 
 func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, request api.PutRestaurantRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
-		func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 			newRestaurant, err := services.UpdateRestaurant(utils.StringToUint(restaurantId), request.Name, request.Description, request.Tags)
 			if err != nil {
 				err.GinHandler(c)
@@ -38,7 +39,7 @@ func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
 
 func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, request api.PutTableRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
-		func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 			if table := services.CreateTable(restaurant.ID, request.Label); table != nil {
 				c.JSON(http.StatusCreated, api.Table{
 					Id:    utils.UintToString(table.ID),
@@ -56,11 +57,11 @@ func (RestaurantApi) UpdateTable(ctx *gin.Context, id string, gin_body api.PutTa
 
 func (RestaurantApi) DeleteTable(ctx *gin.Context, id string) {
 	middleware.GetAccount(ctx,
-		func(ctx *gin.Context, account api.Account) {
+		func(ctx *gin.Context, account core.Account) {
 			var table model.Table
 			services.DB.Find(&table, utils.StringToUint(id))
 			middleware.RestaurantOwner(ctx, utils.UintToString(table.RestaurantId),
-				func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+				func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 					services.DB.Delete(&table)
 				})
 		})
@@ -85,7 +86,7 @@ func (RestaurantApi) ListRestaurantTable(ctx *gin.Context, restaurantId string) 
 
 func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItemRequest) {
 	middleware.GetAccount(ctx,
-		func(c *gin.Context, account api.Account) {
+		func(c *gin.Context, account core.Account) {
 			if request.Pricing < 0 {
 				ctx.String(http.StatusBadRequest, "")
 			}
@@ -96,7 +97,7 @@ func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItem
 				return
 			}
 			restaurant, _ := services.GetRestaurant(item.RestaurantId)
-			if utils.StringToUint(account.Id) != restaurant.AccountId {
+			if account.ID != restaurant.AccountId {
 				c.JSON(http.StatusNotAcceptable, gin.H{})
 				return
 			}
@@ -111,7 +112,7 @@ func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItem
 
 func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 	middleware.GetAccount(ctx,
-		func(c *gin.Context, account api.Account) {
+		func(c *gin.Context, account core.Account) {
 			itemId := utils.StringToUint(id)
 			item, err := services.GetItem(itemId)
 			if err != nil {
@@ -119,7 +120,7 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 				return
 			}
 			restaurant, _ := services.GetRestaurant(item.RestaurantId)
-			if utils.StringToUint(account.Id) != restaurant.AccountId {
+			if account.ID != restaurant.AccountId {
 				c.JSON(http.StatusNotAcceptable, gin.H{})
 				return
 			}
@@ -139,15 +140,15 @@ func (RestaurantApi) GetItem(ctx *gin.Context, id string) {
 
 func (RestaurantApi) CreateRestaurant(ctx *gin.Context, request api.PutRestaurantRequest) {
 	middleware.IsRoot(ctx,
-		func(c *gin.Context, account api.Account) {
-			restaurant, _ := services.CreateRestaurant(utils.StringToUint(account.Id), request.Name, request.Description, request.Tags)
+		func(c *gin.Context, account core.Account) {
+			restaurant, _ := services.CreateRestaurant(account.ID, request.Name, request.Description, request.Tags)
 			c.JSON(http.StatusCreated, RestaurantBackward(restaurant))
 		})
 }
 
 func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request api.PutItemRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
-		func(ctx *gin.Context, account api.Account, restaurant model.Restaurant) {
+		func(ctx *gin.Context, account core.Account, restaurant model.Restaurant) {
 			item, err := services.CreateItem(restaurant.ID, ItemForward(request))
 			if err != nil {
 				err.GinHandler(ctx)
@@ -176,8 +177,8 @@ func (RestaurantApi) ListRestaurantItems(ctx *gin.Context, id string) {
 
 func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 	middleware.GetAccount(ctx,
-		func(c *gin.Context, account api.Account) {
-			restaurants := services.ListRestaurants(utils.StringToUint(account.Id))
+		func(c *gin.Context, account core.Account) {
+			restaurants := services.ListRestaurants(account.ID)
 			var restauratnList api.RestaurantList = api.RestaurantList{
 				Data: make([]api.Restaurant, 0),
 			}
@@ -190,7 +191,7 @@ func (RestaurantApi) ListRestaurants(ctx *gin.Context) {
 
 func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, restaurantId string) {
 	middleware.RestaurantOwner(ctx, restaurantId,
-		func(ctx *gin.Context, account api.Account, restaurant model.Restaurant) {
+		func(ctx *gin.Context, account core.Account, restaurant model.Restaurant) {
 			if err := services.DeleteRestaurant(utils.StringToUint(restaurantId)); err != nil {
 				err.GinHandler(ctx)
 				return
@@ -201,7 +202,7 @@ func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, restaurantId string) {
 
 func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 	middleware.GetAccount(ctx,
-		func(ctx *gin.Context, account api.Account) {
+		func(ctx *gin.Context, account core.Account) {
 			itemId := utils.StringToUint(id)
 			item, err := services.GetItem(itemId)
 			if err != nil {
@@ -209,7 +210,7 @@ func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 				return
 			}
 			middleware.RestaurantOwner(ctx, utils.UintToString(item.RestaurantId),
-				func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+				func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 					file, _ := c.FormFile("file")
 					ctx.JSON(http.StatusCreated, api.Uploading{Url: services.UploadItemImage(item.ID, file)})
 				})
@@ -245,7 +246,7 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 
 func (RestaurantApi) CreatePrinter(c *gin.Context, id string, request api.PutPrinterRequest) {
 	middleware.RestaurantOwner(c, id,
-		func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 			printer, err := services.CreatePrinter(model.Printer{
 				RestaurantId: restaurant.ID,
 				Sn:           request.Sn,
@@ -268,7 +269,7 @@ func (RestaurantApi) CreatePrinter(c *gin.Context, id string, request api.PutPri
 
 func (RestaurantApi) ListPrinters(c *gin.Context, id string) {
 	middleware.RestaurantOwner(c, id,
-		func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 			c.JSON(http.StatusOK, api.PrinterList{
 				Data: f.Map(services.ListPrinters(restaurant.ID),
 					func(_ int, printer model.Printer) api.Printer {
@@ -280,10 +281,10 @@ func (RestaurantApi) ListPrinters(c *gin.Context, id string) {
 
 func (RestaurantApi) UpdatePrinter(c *gin.Context, id string, request api.PutPrinterRequest) {
 	middleware.GetAccount(c,
-		func(c *gin.Context, account api.Account) {
+		func(c *gin.Context, account core.Account) {
 			printer := services.GetPrinter(utils.StringToUint(id))
 			middleware.RestaurantOwner(c, utils.UintToString(printer.RestaurantId),
-				func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+				func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 					printer := model.Printer{
 						Name:        request.Name,
 						Description: request.Description,
@@ -298,10 +299,10 @@ func (RestaurantApi) UpdatePrinter(c *gin.Context, id string, request api.PutPri
 
 func (RestaurantApi) DeletePrinter(c *gin.Context, id string) {
 	middleware.GetAccount(c,
-		func(c *gin.Context, account api.Account) {
+		func(c *gin.Context, account core.Account) {
 			printer := services.GetPrinter(utils.StringToUint(id))
 			middleware.RestaurantOwner(c, utils.UintToString(printer.RestaurantId),
-				func(c *gin.Context, account api.Account, restaurant model.Restaurant) {
+				func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 					err := services.DeletePrinter(printer.ID)
 					if err != nil {
 						err.GinHandler(c)

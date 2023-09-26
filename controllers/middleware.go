@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	api "github.com/Dparty/core-api"
-	"github.com/Dparty/core/services"
+	"github.com/Dparty/model/core"
 	"github.com/Dparty/model/restaurant"
 
+	"github.com/Dparty/common/constants"
 	"github.com/Dparty/common/errors"
 
 	"github.com/Dparty/common/utils"
@@ -16,19 +16,18 @@ import (
 
 type Middleware struct{}
 
-func (Middleware) GetAccount(c *gin.Context, next func(c *gin.Context, account api.Account)) {
+func (Middleware) GetAccount(c *gin.Context, next func(c *gin.Context, account core.Account)) {
 	auth := Authorize(c)
 	if auth.Status != Authorized {
 		errors.UnauthorizedError().GinHandler(c)
 		return
 	}
-	account := accountApi.GetAccountById(utils.UintToString(auth.AccountId))
-	next(c, *account)
+	next(c, core.FindAccount(auth.AccountId))
 }
 
-func (m Middleware) IsRoot(c *gin.Context, next func(c *gin.Context, account api.Account)) {
-	m.GetAccount(c, func(c *gin.Context, account api.Account) {
-		if account.Role != api.ROOT {
+func (m Middleware) IsRoot(c *gin.Context, next func(c *gin.Context, account core.Account)) {
+	m.GetAccount(c, func(c *gin.Context, account core.Account) {
+		if account.Role != constants.ROOT {
 			errors.PermissionError().GinHandler(c)
 			return
 		}
@@ -36,19 +35,19 @@ func (m Middleware) IsRoot(c *gin.Context, next func(c *gin.Context, account api
 	})
 }
 
-func (m Middleware) RestaurantOwner(c *gin.Context, restaurantId string, next func(c *gin.Context, account api.Account, restaurant restaurant.Restaurant)) {
-	m.GetAccount(c, func(c *gin.Context, account api.Account) {
+func (m Middleware) RestaurantOwner(c *gin.Context, restaurantId string,
+	next func(c *gin.Context, account core.Account, restaurant restaurant.Restaurant)) {
+	m.GetAccount(c, func(c *gin.Context, account core.Account) {
 		id := utils.StringToUint(restaurantId)
-		restaurant, err := services.GetRestaurant(id)
-		if err != nil {
-			err.GinHandler(c)
+		r := restaurant.FindRestaurant(id)
+		if r == nil {
 			return
 		}
-		if utils.StringToUint(account.Id) != restaurant.AccountId {
+		if account.ID != r.Owner().ID {
 			c.JSON(http.StatusNotAcceptable, gin.H{})
 			return
 		}
-		next(c, account, restaurant)
+		next(c, account, *r)
 	})
 }
 
