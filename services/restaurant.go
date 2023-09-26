@@ -37,10 +37,7 @@ func UpdateRestaurant(restaurantId uint, name, description string, tags []string
 }
 
 func DeleteRestaurant(id uint) *errors.Error {
-	restaurant, err := GetRestaurant(id)
-	if err != nil {
-		return err
-	}
+	restaurant := GetRestaurant(id)
 	DB.Delete(&restaurant)
 	return nil
 }
@@ -118,13 +115,8 @@ func DeleteItem(id uint) {
 	DB.Delete(&model.Item{}, id)
 }
 
-func GetRestaurant(id uint) (model.Restaurant, *errors.Error) {
-	var restaurant model.Restaurant
-	ctx := DB.Find(&restaurant, id)
-	if ctx.RowsAffected == 0 {
-		return restaurant, errors.NotFoundError()
-	}
-	return restaurant, nil
+func GetRestaurant(id uint) *model.Restaurant {
+	return model.FindRestaurant(id)
 }
 
 func ListRestaurants(accountId uint) []model.Restaurant {
@@ -194,14 +186,14 @@ func GetTable(id uint) model.Table {
 	return table
 }
 
-func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
-	var tables []model.Table = make([]model.Table, 0)
-	if _, err := GetRestaurant(restaurantId); err != nil {
-		return tables, err
-	}
-	DB.Where("restaurant_id = ?", restaurantId).Find(&tables)
-	return tables, nil
-}
+// func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
+// 	var tables []model.Table = make([]model.Table, 0)
+// 	if _, err := GetRestaurant(restaurantId); err != nil {
+// 		return tables, err
+// 	}
+// 	DB.Where("restaurant_id = ?", restaurantId).Find(&tables)
+// 	return tables, nil
+// }
 
 func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model.Order, *errors.Error) {
 	item, err := GetItem(itemId)
@@ -222,7 +214,7 @@ func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model
 	}, err
 }
 
-func CreateBill(table model.Table, orders model.Orders) (model.Bill, *errors.Error) {
+func CreateBill(restaurantName string, table model.Table, orders model.Orders) (model.Bill, *errors.Error) {
 	var lastBill model.Bill
 	ctx := DB.Where("restaurant_id = ?", table.RestaurantId).Order("created_at DESC").Find(&lastBill)
 	var pickUpCode int64 = 0
@@ -233,15 +225,15 @@ func CreateBill(table model.Table, orders model.Orders) (model.Bill, *errors.Err
 		Orders: orders, TableLabel: table.Label,
 		PickUpCode: pickUpCode}
 	DB.Save(&bill)
-	PrintBill(bill, table, false)
+	PrintBill(restaurantName, bill, table, false)
 	return bill, nil
 }
 
-func PrintBill(bill model.Bill, table model.Table, reprint bool) {
+func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprint bool) {
 	var printers []model.Printer
 	DB.Where("restaurant_id = ?", table.RestaurantId).Find(&printers)
 	content := ""
-	content += "<CB>和食</CB><BR>"
+	content += fmt.Sprintf("<CB>%s</CB><BR>", restaurantName)
 	content += fmt.Sprintf("<C><L><B>餐號: A%d</B></L></C>", bill.PickUpCode)
 	content += fmt.Sprintf("<C><L><B>桌號: %s</B></L></C>", table.Label)
 	content += "--------------------------------<BR>"

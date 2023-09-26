@@ -43,12 +43,12 @@ func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, req
 }
 
 func (RestaurantApi) GetRestaurant(ctx *gin.Context, id string) {
-	restaurant, err := services.GetRestaurant(utils.StringToUint(id))
-	if err != nil {
-		err.GinHandler(ctx)
+	restaurant := services.GetRestaurant(utils.StringToUint(id))
+	if restaurant == nil {
+		ctx.JSON(http.StatusNotFound, "")
 		return
 	}
-	ctx.JSON(http.StatusOK, RestaurantBackward(restaurant))
+	ctx.JSON(http.StatusOK, RestaurantBackward(*restaurant))
 }
 
 func (RestaurantApi) CreateTable(ctx *gin.Context, restaurantId string, request api.PutTableRequest) {
@@ -82,13 +82,8 @@ func (RestaurantApi) DeleteTable(ctx *gin.Context, id string) {
 }
 
 func (RestaurantApi) ListRestaurantTable(ctx *gin.Context, restaurantId string) {
-	tables, err := services.ListRestaurantTable(utils.StringToUint(restaurantId))
-	if err != nil {
-		err.GinHandler(ctx)
-		return
-	}
 	ctx.JSON(http.StatusOK, api.TableList{
-		Data: f.Reference(f.Map(tables,
+		Data: f.Reference(f.Map(services.GetRestaurant(utils.StringToUint(restaurantId)).Tables,
 			func(_ int, table model.Table) api.Table {
 				return api.Table{
 					Id:    utils.UintToString(table.ID),
@@ -110,7 +105,7 @@ func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItem
 				err.GinHandler(c)
 				return
 			}
-			restaurant, _ := services.GetRestaurant(item.RestaurantId)
+			restaurant := services.GetRestaurant(item.RestaurantId)
 			if account.ID != restaurant.AccountId {
 				c.JSON(http.StatusNotAcceptable, gin.H{})
 				return
@@ -133,7 +128,7 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 				err.GinHandler(c)
 				return
 			}
-			restaurant, _ := services.GetRestaurant(item.RestaurantId)
+			restaurant := services.GetRestaurant(item.RestaurantId)
 			if account.ID != restaurant.AccountId {
 				c.JSON(http.StatusNotAcceptable, gin.H{})
 				return
@@ -177,10 +172,7 @@ func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request a
 }
 
 func (RestaurantApi) ListRestaurantItems(ctx *gin.Context, id string) {
-	res, err := services.GetRestaurant(utils.StringToUint(id))
-	if err != nil {
-		err.GinHandler(ctx)
-	}
+	res := services.GetRestaurant(utils.StringToUint(id))
 	ctx.JSON(http.StatusOK, api.ItemList{
 		Data: f.Map(services.ListRestaurantItems(res.ID),
 			func(_ int, item model.Item) api.Item {
@@ -237,11 +229,7 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 		ctx.JSON(http.StatusBadRequest, "")
 		return
 	}
-	restaurant, err := services.GetRestaurant(table.RestaurantId)
-	if err != nil {
-		err.GinHandler(ctx)
-		return
-	}
+	restaurant := services.GetRestaurant(table.RestaurantId)
 	var orders model.Orders = make(model.Orders, 0)
 	for _, order := range request.Orders {
 		var pairs map[string]string = make(map[string]string)
@@ -255,7 +243,7 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 		}
 		orders = append(orders, order)
 	}
-	services.CreateBill(table, orders)
+	services.CreateBill(restaurant.Name, table, orders)
 	ctx.JSON(http.StatusCreated, api.Bill{
 		Orders: make([]api.Order, 0),
 	})
