@@ -1,23 +1,18 @@
 package controllers
 
 import (
+	"net/http"
+
+	"github.com/Dparty/common/constants"
 	"github.com/Dparty/common/errors"
+	"github.com/Dparty/common/utils"
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
 	model "github.com/Dparty/model/core"
-
-	"github.com/Dparty/common/constants"
-
-	"net/http"
-
-	"github.com/Dparty/common/utils"
-
 	"github.com/gin-gonic/gin"
 )
 
 type AccountApi struct{}
-
-var accountApi AccountApi
 
 func (AccountApi) CreateSession(c *gin.Context, createSessionRequest api.CreateSessionRequest) {
 	session, sessionError := core.CreateSession(

@@ -8,6 +8,19 @@ import (
 	f "github.com/chenyunda218/golambda"
 )
 
+func BillBackward(bill model.Bill) api.Bill {
+	return api.Bill{}
+}
+
+func OrderBackward(order model.Order) api.Order {
+	return api.Order{
+		Item: ItemBackward(order.Item),
+		Options: f.Map(order.Options, func(_ int, option model.Option) api.Pair {
+			return api.Pair{}
+		}),
+	}
+}
+
 func AccountBackward(account core.Account) api.Account {
 	return api.Account{
 		Id:    utils.UintToString(account.ID),

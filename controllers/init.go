@@ -40,7 +40,9 @@ func Init() {
 		ctx.Header("Content-Type", "text/plain")
 		ctx.String(http.StatusOK, "3E6TRJ5g81bCsdZI")
 	})
+	var accountApi AccountApi
 	api.AccountApiInterfaceMounter(router, accountApi)
+	var restaurantApi RestaurantApi
 	api.RestaurantApiInterfaceMounter(router, restaurantApi)
 }
 

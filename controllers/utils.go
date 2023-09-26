@@ -3,10 +3,8 @@ package controllers
 import (
 	"strings"
 
-	api "github.com/Dparty/core-api"
-
 	"github.com/Dparty/common/utils"
-
+	api "github.com/Dparty/core-api"
 	"github.com/gin-gonic/gin"
 )
 

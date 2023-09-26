@@ -3,14 +3,11 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/Dparty/model/core"
-	"github.com/Dparty/model/restaurant"
-
 	"github.com/Dparty/common/constants"
 	"github.com/Dparty/common/errors"
-
 	"github.com/Dparty/common/utils"
-
+	"github.com/Dparty/model/core"
+	"github.com/Dparty/model/restaurant"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,8 +35,7 @@ func (m Middleware) IsRoot(c *gin.Context, next func(c *gin.Context, account cor
 func (m Middleware) RestaurantOwner(c *gin.Context, restaurantId string,
 	next func(c *gin.Context, account core.Account, restaurant restaurant.Restaurant)) {
 	m.GetAccount(c, func(c *gin.Context, account core.Account) {
-		id := utils.StringToUint(restaurantId)
-		r := restaurant.FindRestaurant(id)
+		r := restaurant.FindRestaurant(utils.StringToUint(restaurantId))
 		if r == nil {
 			return
 		}
