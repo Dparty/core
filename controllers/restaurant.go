@@ -256,6 +256,9 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 		orders = append(orders, order)
 	}
 	services.CreateBill(table, orders)
+	ctx.JSON(http.StatusCreated, api.Bill{
+		Orders: make([]api.Order, 0),
+	})
 }
 
 func (RestaurantApi) CreatePrinter(c *gin.Context, id string, request api.PutPrinterRequest) {
