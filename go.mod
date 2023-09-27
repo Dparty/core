@@ -6,7 +6,7 @@ require (
 	github.com/Dparty/common v0.0.0-20230814081334-bd5b0fc5d28d
 	github.com/Dparty/core-api v0.0.0-20230926094525-9cc587572858
 	github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820
-	github.com/Dparty/model v0.0.0-20230926091553-552a6e339028
+	github.com/Dparty/model v0.0.0-20230927084848-f60804e6ff5f
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.16.0

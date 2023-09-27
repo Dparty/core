@@ -15,8 +15,11 @@ func BillBackward(bill model.Bill) api.Bill {
 func OrderBackward(order model.Order) api.Order {
 	return api.Order{
 		Item: ItemBackward(order.Item),
-		Options: f.Map(order.Options, func(_ int, option model.Option) api.Pair {
-			return api.Pair{}
+		Options: f.Map(order.Specification, func(_ int, option model.Pair) api.Pair {
+			return api.Pair{
+				Left:  option.Left,
+				Right: option.Right,
+			}
 		}),
 	}
 }

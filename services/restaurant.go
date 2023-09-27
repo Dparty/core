@@ -186,18 +186,9 @@ func GetTable(id uint) model.Table {
 	return table
 }
 
-// func ListRestaurantTable(restaurantId uint) ([]model.Table, *errors.Error) {
-// 	var tables []model.Table = make([]model.Table, 0)
-// 	if _, err := GetRestaurant(restaurantId); err != nil {
-// 		return tables, err
-// 	}
-// 	DB.Where("restaurant_id = ?", restaurantId).Find(&tables)
-// 	return tables, nil
-// }
-
 func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model.Order, *errors.Error) {
 	item, err := GetItem(itemId)
-	var options model.Options = make(model.Options, 0)
+	var options []model.Pair = make([]model.Pair, 0)
 	if item.RestaurantId != restaurantId {
 		return model.Order{}, errors.NotFoundError()
 	}
@@ -209,8 +200,8 @@ func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model
 		options = append(options, option)
 	}
 	return model.Order{
-		Item:    item,
-		Options: options,
+		Item:          item,
+		Specification: options,
 	}, err
 }
 
@@ -241,8 +232,8 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	for _, order := range bill.Orders {
 		content += fmt.Sprintf("%s %.2f<BR>", order.Item.Name, float64(order.Item.Pricing)/100)
 		attributes := ""
-		for _, option := range order.Options {
-			attributes += fmt.Sprintf("  |--   %s +%.2f<BR>", option.Label, float64(option.Extra)/100)
+		for _, option := range order.Specification {
+			attributes += fmt.Sprintf("  |--   %s +%.2f<BR>", option.Right, float64(order.Extra(option))/100)
 		}
 		content += attributes
 		for _, printer := range order.Item.Printers {
