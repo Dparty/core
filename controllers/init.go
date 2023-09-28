@@ -3,13 +3,10 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/Dparty/common/server"
 	api "github.com/Dparty/core-api"
-	model "github.com/Dparty/model/restaurant"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"gorm.io/gorm"
 )
 
@@ -47,27 +44,7 @@ func Init(inject *gorm.DB) {
 		ctx.Header("Content-Type", "text/plain")
 		ctx.String(http.StatusOK, "3E6TRJ5g81bCsdZI")
 	})
-	router.GET("/cooperate/:id", func(c *gin.Context) {
-		tableId := c.Param("id")
-		ctx := db.Find(&model.Table{}, tableId)
-		if ctx.RowsAffected == 0 {
-			c.JSON(http.StatusNotFound, "")
-			return
-		}
-		var upgrader = websocket.Upgrader{
-			ReadBufferSize:  1024,
-			WriteBufferSize: 1024,
-		}
-		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-		if err != nil {
-			return
-		}
-		defer conn.Close()
-		for {
-			conn.WriteMessage(websocket.TextMessage, []byte("Hello, WebSocket!"))
-			time.Sleep(time.Second)
-		}
-	})
+	router.GET("/cooperate/:id", cooperate)
 	var accountApi AccountApi
 	api.AccountApiInterfaceMounter(router, accountApi)
 	var restaurantApi RestaurantApi
