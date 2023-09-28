@@ -77,6 +77,7 @@ func (RestaurantApi) DeleteTable(ctx *gin.Context, id string) {
 			middleware.RestaurantOwner(ctx, utils.UintToString(table.RestaurantId),
 				func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 					services.DB.Delete(&table)
+					c.JSON(http.StatusNoContent, "")
 				})
 		})
 }
