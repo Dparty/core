@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Dparty/common/constants"
-	"github.com/Dparty/common/errors"
+	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
@@ -20,7 +20,7 @@ func (AccountApi) CreateSession(c *gin.Context, createSessionRequest api.CreateS
 		createSessionRequest.Password,
 	)
 	if sessionError != nil {
-		sessionError.GinHandler(c)
+		fault.GinHandler(c, sessionError)
 		return
 	}
 	c.JSON(http.StatusCreated, SessionBackward(*session))
@@ -45,7 +45,7 @@ func (AccountApi) CreateAccount(c *gin.Context, createAccountRequest api.CreateA
 			role,
 		)
 		if createError != nil {
-			createError.GinHandler(c)
+			fault.GinHandler(c, createError)
 			return
 		}
 		c.JSON(http.StatusCreated, AccountBackward(*a))
@@ -59,12 +59,12 @@ func (AccountApi) ListAccount(gin_context *gin.Context, ordering api.Ordering, i
 func (AccountApi) GetAccount(c *gin.Context) {
 	auth := Authorize(c)
 	if auth.Status != Authorized {
-		errors.UnauthorizedError().GinHandler(c)
+		fault.GinHandler(c, fault.ErrUnauthorized)
 		return
 	}
 	account := core.GetAccountById(auth.AccountId)
 	if account == nil {
-		errors.NotFoundError().GinHandler(c)
+		fault.GinHandler(c, fault.ErrNotFound)
 		return
 	}
 	c.JSON(http.StatusOK, AccountBackward(*account))
@@ -82,7 +82,7 @@ func (AccountApi) GetAccountById(id string) *api.Account {
 func (a AccountApi) VerifySession(c *gin.Context, sessionVerificationRequest api.SessionVerificationRequest) {
 	auth := Authorize(c)
 	if auth.Status != Authorized {
-		errors.UnauthorizedError().GinHandler(c)
+		fault.GinHandler(c, fault.ErrUnauthorized)
 		return
 	}
 	account := a.GetAccountById(utils.UintToString(auth.AccountId))
@@ -99,7 +99,7 @@ func (a AccountApi) UpdatePassword(c *gin.Context, request api.UpdatePasswordReq
 	middleware.GetAccount(c,
 		func(c *gin.Context, account model.Account) {
 			if err := core.UpdatePassword(account.ID, request.Password, request.NewPassword); err != nil {
-				err.GinHandler(c)
+				fault.GinHandler(c, err)
 				return
 			}
 			c.String(http.StatusNoContent, "")

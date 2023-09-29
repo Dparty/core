@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
 	api "github.com/Dparty/core-api"
 	"github.com/Dparty/core/services"
@@ -32,13 +33,13 @@ func (RestaurantApi) ListBills(ctx *gin.Context, restaurantId string, startAt in
 
 func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, request api.PutRestaurantRequest) {
 	middleware.RestaurantOwner(ctx, restaurantId,
-		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
+		func(ctx *gin.Context, account core.Account, restaurant model.Restaurant) {
 			newRestaurant, err := services.UpdateRestaurant(utils.StringToUint(restaurantId), request.Name, request.Description, request.Tags)
 			if err != nil {
-				err.GinHandler(c)
+				fault.GinHandler(ctx, err)
 				return
 			}
-			c.JSON(http.StatusOK, RestaurantBackward(newRestaurant))
+			ctx.JSON(http.StatusOK, RestaurantBackward(newRestaurant))
 		})
 }
 
@@ -96,27 +97,27 @@ func (RestaurantApi) ListRestaurantTable(ctx *gin.Context, restaurantId string) 
 
 func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItemRequest) {
 	middleware.GetAccount(ctx,
-		func(c *gin.Context, account core.Account) {
+		func(ctx *gin.Context, account core.Account) {
 			if request.Pricing < 0 {
 				ctx.String(http.StatusBadRequest, "")
 			}
 			itemId := utils.StringToUint(id)
 			item, err := services.GetItem(itemId)
 			if err != nil {
-				err.GinHandler(c)
+				fault.GinHandler(ctx, err)
 				return
 			}
 			restaurant := services.GetRestaurant(item.RestaurantId)
 			if account.ID != restaurant.AccountId {
-				c.JSON(http.StatusNotAcceptable, gin.H{})
+				ctx.JSON(http.StatusNotAcceptable, "")
 				return
 			}
 			item, err = services.UpdateItem(itemId, ItemForward(request))
 			if err != nil {
-				err.GinHandler(c)
+				fault.GinHandler(ctx, err)
 				return
 			}
-			c.JSON(http.StatusOK, ItemBackward(item))
+			ctx.JSON(http.StatusOK, ItemBackward(item))
 		})
 }
 
@@ -126,7 +127,7 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 			itemId := utils.StringToUint(id)
 			item, err := services.GetItem(itemId)
 			if err != nil {
-				err.GinHandler(c)
+				fault.GinHandler(ctx, err)
 				return
 			}
 			restaurant := services.GetRestaurant(item.RestaurantId)
@@ -142,7 +143,7 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 func (RestaurantApi) GetItem(ctx *gin.Context, id string) {
 	item, err := services.GetItem(utils.StringToUint(id))
 	if err != nil {
-		err.GinHandler(ctx)
+		fault.GinHandler(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, ItemBackward(item))
@@ -161,7 +162,7 @@ func (RestaurantApi) CreateItem(ctx *gin.Context, restaurantId string, request a
 		func(ctx *gin.Context, account core.Account, restaurant model.Restaurant) {
 			item, err := services.CreateItem(restaurant.ID, ItemForward(request))
 			if err != nil {
-				err.GinHandler(ctx)
+				fault.GinHandler(ctx, err)
 				return
 			}
 			if request.Pricing < 0 {
@@ -200,7 +201,7 @@ func (RestaurantApi) DeleteRestaurant(ctx *gin.Context, restaurantId string) {
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(ctx *gin.Context, account core.Account, restaurant model.Restaurant) {
 			if err := services.DeleteRestaurant(utils.StringToUint(restaurantId)); err != nil {
-				err.GinHandler(ctx)
+				fault.GinHandler(ctx, err)
 				return
 			}
 			ctx.JSON(http.StatusNoContent, "")
@@ -213,7 +214,7 @@ func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 			itemId := utils.StringToUint(id)
 			item, err := services.GetItem(itemId)
 			if err != nil {
-				err.GinHandler(ctx)
+				fault.GinHandler(ctx, err)
 				return
 			}
 			middleware.RestaurantOwner(ctx, utils.UintToString(item.RestaurantId),
@@ -239,7 +240,7 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 		}
 		order, err := services.CreateOrder(restaurant.ID, utils.StringToUint(order.ItemId), pairs)
 		if err != nil {
-			err.GinHandler(ctx)
+			fault.GinHandler(ctx, err)
 			return
 		}
 		orders = append(orders, order)
@@ -261,7 +262,7 @@ func (RestaurantApi) CreatePrinter(c *gin.Context, id string, request api.PutPri
 				Type:         model.PrinterType(request.Type),
 			})
 			if err != nil {
-				err.GinHandler(c)
+				fault.GinHandler(c, err)
 				return
 			}
 			c.JSON(http.StatusCreated, api.Printer{
@@ -311,7 +312,7 @@ func (RestaurantApi) DeletePrinter(c *gin.Context, id string) {
 				func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 					err := services.DeletePrinter(printer.ID)
 					if err != nil {
-						err.GinHandler(c)
+						fault.GinHandler(c, err)
 						return
 					}
 					c.String(http.StatusNoContent, "")

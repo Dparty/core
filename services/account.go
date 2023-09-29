@@ -1,13 +1,13 @@
 package services
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/Dparty/common/constants"
-	"github.com/Dparty/common/errors"
+	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
 	"github.com/Dparty/model/core"
-	"gorm.io/gorm"
 )
 
 const EXPIRED_TIME = 60 * 5
@@ -27,16 +27,6 @@ type Session struct {
 	CreatedAt   int64                 `json:"createdAt"`
 }
 
-func (a Account) Forward() core.Account {
-	return core.Account{
-		Model: gorm.Model{
-			ID: a.ID,
-		},
-		Email: a.Email,
-		Role:  a.Role,
-	}
-}
-
 func (a *Account) Backward(account core.Account) *Account {
 	a.Email = account.Email
 	a.ID = account.ID
@@ -44,14 +34,15 @@ func (a *Account) Backward(account core.Account) *Account {
 	return a
 }
 
-func CreateSession(email, password string) (*Session, *errors.Error) {
-	var account *core.Account
-	DB.First(&account, "email = ?", email)
-	if account == nil {
-		return nil, errors.AuthenticationError()
+func CreateSession(email, password string) (*Session, error) {
+	var account core.Account
+	ctx := DB.Find(&account, "email = ?", email)
+	fmt.Println(account)
+	if ctx.RowsAffected == 0 {
+		return nil, fault.ErrNotFound
 	}
 	if !utils.PasswordsMatch(account.Password, password, account.Salt) {
-		return nil, errors.AuthenticationError()
+		return nil, fault.ErrUnauthorized
 	}
 	expiredAt := time.Now().AddDate(0, 0, 7).Unix()
 	token, err := utils.SignJwt(
@@ -61,12 +52,9 @@ func CreateSession(email, password string) (*Session, *errors.Error) {
 		expiredAt,
 	)
 	if err != nil {
-		return nil, errors.UndefineError()
+		return nil, fault.ErrUndefined
 	}
-	var a Account
-	a.Backward(*account)
 	return &Session{
-		Account:     *a.Backward(*account),
 		Token:       token,
 		TokenFormat: constants.JWT,
 		TokeType:    constants.BEARER,
@@ -74,14 +62,14 @@ func CreateSession(email, password string) (*Session, *errors.Error) {
 	}, nil
 }
 
-func UpdatePassword(accountId uint, oldPassword, newPassword string) *errors.Error {
+func UpdatePassword(accountId uint, oldPassword, newPassword string) error {
 	var account core.Account
 	ctx := DB.First(&account, accountId)
 	if ctx.RowsAffected == 0 {
-		return errors.NotFoundError()
+		return fault.ErrNotFound
 	}
 	if !utils.PasswordsMatch(account.Password, oldPassword, account.Salt) {
-		return errors.AuthenticationError()
+		return fault.ErrUnauthorized
 	}
 	hashed, salt := utils.HashWithSalt(newPassword)
 	account.Password = hashed
@@ -90,11 +78,11 @@ func UpdatePassword(accountId uint, oldPassword, newPassword string) *errors.Err
 	return nil
 }
 
-func UpdatePasswordForce(accountId uint, newPassword string) *errors.Error {
+func UpdatePasswordForce(accountId uint, newPassword string) error {
 	var account core.Account
 	ctx := DB.First(&account, accountId)
 	if ctx.RowsAffected == 0 {
-		return errors.NotFoundError()
+		return fault.ErrNotFound
 	}
 	hashed, salt := utils.HashWithSalt(newPassword)
 	account.Password = hashed
@@ -103,19 +91,19 @@ func UpdatePasswordForce(accountId uint, newPassword string) *errors.Error {
 	return nil
 }
 
-func CreateAccount(email, password string, role constants.Role) (*Account, *errors.Error) {
+func CreateAccount(email, password string, role constants.Role) (*Account, error) {
 	var accounts []core.Account
 	DB.Find(&accounts, "email = ?", email)
 	if len(accounts) > 0 {
-		return nil, errors.EmailExists()
+		return nil, fault.ErrEmailExists
 	}
 	hashed, salt := utils.HashWithSalt(password)
-	account := Account{
-		Email: email,
-		Role:  role,
-	}.Forward()
-	account.Password = hashed
-	account.Salt = salt
+	account := core.Account{
+		Email:    email,
+		Role:     role,
+		Password: hashed,
+		Salt:     salt,
+	}
 	account.ID = utils.GenerteId()
 	if role != "" {
 		account.Role = role

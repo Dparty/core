@@ -6,6 +6,8 @@ import (
 
 	"github.com/Dparty/common/server"
 	api "github.com/Dparty/core-api"
+	"github.com/Dparty/core/services"
+	"github.com/Dparty/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -23,6 +25,8 @@ var db *gorm.DB
 
 func Init(inject *gorm.DB) {
 	db = inject
+	model.Init(db)
+	services.Init(db)
 	router = gin.Default()
 	router.Use(server.CorsMiddleware())
 	router.GET("/", func(ctx *gin.Context) {

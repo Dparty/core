@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Dparty/common/constants"
-	"github.com/Dparty/common/errors"
+	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
 	"github.com/Dparty/model/core"
 	"github.com/Dparty/model/restaurant"
@@ -16,16 +16,21 @@ type Middleware struct{}
 func (Middleware) GetAccount(c *gin.Context, next func(c *gin.Context, account core.Account)) {
 	auth := Authorize(c)
 	if auth.Status != Authorized {
-		errors.UnauthorizedError().GinHandler(c)
+		fault.GinHandler(c, fault.ErrUnauthorized)
 		return
 	}
-	next(c, core.FindAccount(auth.AccountId))
+	account, err := core.FindAccount(auth.AccountId)
+	if err != nil {
+		fault.GinHandler(c, err)
+		return
+	}
+	next(c, account)
 }
 
 func (m Middleware) IsRoot(c *gin.Context, next func(c *gin.Context, account core.Account)) {
 	m.GetAccount(c, func(c *gin.Context, account core.Account) {
 		if account.Role != constants.ROOT {
-			errors.PermissionError().GinHandler(c)
+			fault.GinHandler(c, fault.ErrUnauthorized)
 			return
 		}
 		next(c, account)

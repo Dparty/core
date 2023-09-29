@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	model "github.com/Dparty/model/restaurant"
@@ -22,12 +23,14 @@ func (c cooperateMessage) ToJson() []byte {
 var tables = make(map[string][]model.Order)
 
 func cooperate(c *gin.Context) {
-	// tableId := c.Param("id")
-	// ctx := db.Find(&model.Table{}, tableId)
-	// if ctx.RowsAffected == 0 {
-	// 	c.JSON(http.StatusNotFound, "")
-	// 	return
-	// }
+	tableId := c.Param("id")
+	var table model.Table
+	ctx := db.Find(&table, tableId)
+	if ctx.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, "")
+		return
+	}
+	fmt.Println(table)
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,

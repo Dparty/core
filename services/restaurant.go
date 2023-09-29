@@ -8,13 +8,13 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/Dparty/common/errors"
+	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
 	model "github.com/Dparty/model/restaurant"
 	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
-func CreateRestaurant(accountId uint, name, description string, tags []string) (model.Restaurant, *errors.Error) {
+func CreateRestaurant(accountId uint, name, description string, tags []string) (model.Restaurant, error) {
 	restaurant := model.Restaurant{
 		Name:        name,
 		Description: description,
@@ -24,19 +24,19 @@ func CreateRestaurant(accountId uint, name, description string, tags []string) (
 	return restaurant, nil
 }
 
-func UpdateRestaurant(restaurantId uint, name, description string, tags []string) (model.Restaurant, *errors.Error) {
+func UpdateRestaurant(restaurantId uint, name, description string, tags []string) (model.Restaurant, error) {
 	var restaurant model.Restaurant
 	DB.First(&restaurant, restaurantId)
 	restaurant.Name = name
 	restaurant.Description = description
 	ctx := DB.Save(&restaurant)
 	if ctx.RowsAffected == 0 {
-		return restaurant, errors.NotFoundError()
+		return restaurant, fault.ErrNotFound
 	}
 	return restaurant, nil
 }
 
-func DeleteRestaurant(id uint) *errors.Error {
+func DeleteRestaurant(id uint) error {
 	restaurant := GetRestaurant(id)
 	DB.Delete(&restaurant)
 	return nil
@@ -62,34 +62,30 @@ func validItem(item model.Item) bool {
 	return true
 }
 
-func CreateItem(restaurantId uint, item model.Item) (model.Item, *errors.Error) {
+func CreateItem(restaurantId uint, item model.Item) (model.Item, error) {
 	item.RestaurantId = restaurantId
 	if !validItem(item) {
-		return model.Item{}, &errors.Error{
-			StatusCode: 400,
-			Code:       4000,
-			Message:    "重複屬性",
-		}
+		return model.Item{}, fault.ErrUndefined
 	}
 	DB.Save(&item)
 	return item, nil
 }
 
-func GetItem(id uint) (model.Item, *errors.Error) {
+func GetItem(id uint) (model.Item, error) {
 	var item model.Item
 	ctx := DB.Find(&item, id)
 	if ctx.RowsAffected == 0 {
-		return item, errors.NotFoundError()
+		return item, fault.ErrUndefined
 	}
 	return item, nil
 }
 
-// func GetOrderItem(id uint, options model.Options) (model.Order, *errors.Error) {
+// func GetOrderItem(id uint, options model.Options) (model.Order, error) {
 // 	item, err := GetItem(id)
 // 	return model.Order{Name: item.Name, Pricing: item.Pricing}, err
 // }
 
-func UpdateItem(id uint, item model.Item) (model.Item, *errors.Error) {
+func UpdateItem(id uint, item model.Item) (model.Item, error) {
 	item.ID = id
 	var old model.Item
 	DB.Find(&old, id)
@@ -101,11 +97,7 @@ func UpdateItem(id uint, item model.Item) (model.Item, *errors.Error) {
 	old.Tags = item.Tags
 	old.Printers = item.Printers
 	if !validItem(item) {
-		return old, &errors.Error{
-			StatusCode: 400,
-			Code:       4000,
-			Message:    "重複屬性",
-		}
+		return old, fault.ErrUndefined
 	}
 	DB.Save(&old)
 	return old, nil
@@ -186,16 +178,16 @@ func GetTable(id uint) model.Table {
 	return table
 }
 
-func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model.Order, *errors.Error) {
+func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model.Order, error) {
 	item, err := GetItem(itemId)
 	var options []model.Pair = make([]model.Pair, 0)
 	if item.RestaurantId != restaurantId {
-		return model.Order{}, errors.NotFoundError()
+		return model.Order{}, fault.ErrNotFound
 	}
 	for k, v := range optionsMap {
 		option, err := item.Attributes.GetOption(k, v)
 		if err != nil {
-			return model.Order{}, errors.NotFoundError()
+			return model.Order{}, fault.ErrNotFound
 		}
 		options = append(options, option)
 	}
@@ -205,7 +197,7 @@ func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model
 	}, err
 }
 
-func CreateBill(restaurantName string, table model.Table, orders model.Orders) (model.Bill, *errors.Error) {
+func CreateBill(restaurantName string, table model.Table, orders model.Orders) (model.Bill, error) {
 	var lastBill model.Bill
 	ctx := DB.Where("restaurant_id = ?", table.RestaurantId).Order("created_at DESC").Find(&lastBill)
 	var pickUpCode int64 = 0
@@ -259,9 +251,9 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	}
 }
 
-func CreatePrinter(printer model.Printer) (model.Printer, *errors.Error) {
+func CreatePrinter(printer model.Printer) (model.Printer, error) {
 	if ctx := DB.Where("sn = ?", printer.Sn).Find(&model.Printer{}); ctx.RowsAffected != 0 {
-		return model.Printer{}, errors.PrinterSnDuplecateError()
+		return model.Printer{}, fault.ErrUndefined
 	}
 	DB.Save(&printer)
 	return printer, nil
@@ -285,11 +277,11 @@ func GetPrinter(id uint) model.Printer {
 	return printer
 }
 
-func DeletePrinter(id uint) *errors.Error {
+func DeletePrinter(id uint) error {
 	printer := GetPrinter(id)
 	ctx := DB.Delete(&printer)
 	if ctx.RowsAffected == 0 {
-		return errors.NotFoundError()
+		return fault.ErrNotFound
 	}
 	return nil
 }
