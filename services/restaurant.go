@@ -80,11 +80,6 @@ func GetItem(id uint) (model.Item, error) {
 	return item, nil
 }
 
-// func GetOrderItem(id uint, options model.Options) (model.Order, error) {
-// 	item, err := GetItem(id)
-// 	return model.Order{Name: item.Name, Pricing: item.Pricing}, err
-// }
-
 func UpdateItem(id uint, item model.Item) (model.Item, error) {
 	item.ID = id
 	var old model.Item
@@ -276,6 +271,9 @@ func GetPrinter(id uint) model.Printer {
 
 func DeletePrinter(id uint) error {
 	printer := GetPrinter(id)
+	if printer.InUsed() {
+		return fault.ErrBadRequest
+	}
 	ctx := DB.Delete(&printer)
 	if ctx.RowsAffected == 0 {
 		return fault.ErrNotFound

@@ -84,6 +84,8 @@ github.com/Dparty/model v0.0.0-20230929040058-56b87470768d h1:uBJc+rrrA6rZpWR/V7
 github.com/Dparty/model v0.0.0-20230929040058-56b87470768d/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
 github.com/Dparty/model v0.0.0-20230929041354-ff12bf613b44 h1:EK5CJEv69sW0KORiukwe3rAZ/CvEhUICnLSwVHH6Wco=
 github.com/Dparty/model v0.0.0-20230929041354-ff12bf613b44/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
+github.com/Dparty/model v0.0.0-20231001033948-095de96b7353 h1:EBpPtFK18faYPYlTXYFq5tnLgYh4bUOnBIKqvOugBS0=
+github.com/Dparty/model v0.0.0-20231001033948-095de96b7353/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
 github.com/QcloudApi/qcloud_sign_golang v0.0.0-20141224014652-e4130a326409/go.mod h1:1pk82RBxDY/JZnPQrtqHlUFfCctgdorsd9M06fMynOM=
 github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
 github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=
