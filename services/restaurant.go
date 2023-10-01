@@ -252,9 +252,6 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 }
 
 func CreatePrinter(printer model.Printer) (model.Printer, error) {
-	if ctx := DB.Where("sn = ?", printer.Sn).Find(&model.Printer{}); ctx.RowsAffected != 0 {
-		return model.Printer{}, fault.ErrUndefined
-	}
 	DB.Save(&printer)
 	return printer, nil
 }
