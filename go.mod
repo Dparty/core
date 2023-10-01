@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/Dparty/common v0.0.0-20230929033726-ff769bca8c94
-	github.com/Dparty/core-api v0.0.0-20230926094525-9cc587572858
+	github.com/Dparty/core-api v0.0.0-20231001141609-d8a8733478fe
 	github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820
 	github.com/Dparty/model v0.0.0-20231001095235-ab5041520eee
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
