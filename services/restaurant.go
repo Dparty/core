@@ -222,7 +222,7 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 		attributesWithoutMonth := ""
 		for _, option := range order.Specification {
 			attributes += fmt.Sprintf("  |--   %s +%.2f<BR>", option.Right, float64(order.Extra(option))/100)
-			attributesWithoutMonth += fmt.Sprintf("  |--   %s<BR>", option.Right, float64(order.Extra(option))/100)
+			attributesWithoutMonth += fmt.Sprintf("  |--   %s<BR>", option.Right)
 		}
 		content += attributes
 		for _, printer := range order.Item.Printers {
