@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/Dparty/common/utils"
@@ -52,4 +53,24 @@ func AuthorizeByJWT(token string) Authentication {
 		AccountId: utils.StringToUint(claims["id"].(string)),
 		Role:      api.Role(claims["role"].(string)),
 	}
+}
+
+func PairsToMap(s []api.Pair) map[string]string {
+	output := make(map[string]string)
+	for _, option := range s {
+		output[option.Left] = option.Right
+	}
+	return output
+}
+
+func SpecificationEqual(a api.Specification, b api.Specification) bool {
+	if a.ItemId != b.ItemId {
+		return false
+	}
+	return reflect.DeepEqual(PairsToMap(a.Options), PairsToMap(b.Options))
+}
+
+func RemoveFirstOrder(orders []api.Specification, target api.Specification) []api.Specification {
+
+	return orders
 }

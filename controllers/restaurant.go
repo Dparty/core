@@ -234,10 +234,7 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 	restaurant := services.GetRestaurant(table.RestaurantId)
 	var orders model.Orders = make(model.Orders, 0)
 	for _, order := range request.Orders {
-		var pairs map[string]string = make(map[string]string)
-		for _, p := range order.Options {
-			pairs[p.Left] = p.Right
-		}
+		pairs := PairsToMap(order.Options)
 		order, err := services.CreateOrder(restaurant.ID, utils.StringToUint(order.ItemId), pairs)
 		if err != nil {
 			fault.GinHandler(ctx, err)
