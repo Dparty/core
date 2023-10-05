@@ -5,7 +5,6 @@ import (
 	api "github.com/Dparty/core-api"
 	core "github.com/Dparty/core/services"
 	model "github.com/Dparty/model/restaurant"
-	"github.com/chenyunda218/golambda"
 	f "github.com/chenyunda218/golambda"
 )
 
@@ -58,7 +57,7 @@ func RestaurantBackward(restaurant model.Restaurant) api.Restaurant {
 		Name:        restaurant.Name,
 		Description: restaurant.Description,
 		Tags:        tags,
-		Items: golambda.Map(restaurant.GetItems(), func(_ int, item model.Item) api.Item {
+		Items: f.Map(restaurant.GetItems(), func(_ int, item model.Item) api.Item {
 			return ItemBackward(item)
 		}),
 	}
