@@ -69,11 +69,11 @@ func ItemBackward(item model.Item) api.Item {
 	for _, a := range item.Attributes {
 		attributes = append(attributes, AttributeBackward(a))
 	}
-	var images []string = make([]string, 0)
+	var images = make([]string, 0)
 	for _, image := range item.Images {
 		images = append(images, image)
 	}
-	var tags []string = make([]string, 0)
+	var tags = make([]string, 0)
 	if len(item.Tags) != 0 {
 		tags = item.Tags
 	}
@@ -121,7 +121,7 @@ func AttributeForward(attribute api.Attribute) model.Attribute {
 }
 
 func AttributeBackward(attribute model.Attribute) api.Attribute {
-	var options []api.Option = make([]api.Option, 0)
+	var options = make([]api.Option, 0)
 	for _, o := range attribute.Options {
 		options = append(options, api.Option{
 			Label: o.Label,
