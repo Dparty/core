@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -17,9 +16,13 @@ import (
 
 type RestaurantApi struct{}
 
+// GetTable implements coreapi.RestaurantApiInterface.
+func (RestaurantApi) GetTable(gin_context *gin.Context, id string) {
+	panic("unimplemented")
+}
+
 // ListBills implements coreapi.RestaurantApiInterface.
 func (RestaurantApi) ListBills(ctx *gin.Context, restaurantId string, startAt int64, endAt int64) {
-	fmt.Println(startAt, endAt)
 	middleware.RestaurantOwner(ctx, restaurantId,
 		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
 			start := time.Unix(startAt, 0)
