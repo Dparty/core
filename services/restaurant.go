@@ -18,6 +18,7 @@ func CreateRestaurant(accountId uint, name, description string, tags []string) (
 	restaurant := model.Restaurant{
 		Name:        name,
 		Description: description,
+		Tags:        tags,
 	}
 	restaurant.AccountId = accountId
 	DB.Save(&restaurant)
