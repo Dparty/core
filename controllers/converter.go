@@ -51,12 +51,11 @@ func PaginationBackward(pagination core.Pagination) api.Pagination {
 }
 
 func RestaurantBackward(restaurant model.Restaurant) api.Restaurant {
-	var tags []string = make([]string, 0)
 	return api.Restaurant{
 		Id:          utils.UintToString(restaurant.ID),
 		Name:        restaurant.Name,
 		Description: restaurant.Description,
-		Tags:        tags,
+		Tags:        restaurant.Tags,
 		Items: f.Map(restaurant.GetItems(), func(_ int, item model.Item) api.Item {
 			return ItemBackward(item)
 		}),
