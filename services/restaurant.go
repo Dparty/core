@@ -29,6 +29,7 @@ func UpdateRestaurant(restaurantId uint, name, description string, tags []string
 	DB.First(&restaurant, restaurantId)
 	restaurant.Name = name
 	restaurant.Description = description
+	restaurant.Tags = tags
 	ctx := DB.Save(&restaurant)
 	if ctx.RowsAffected == 0 {
 		return restaurant, fault.ErrNotFound
