@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"mime/multipart"
 	"net/http"
@@ -251,6 +252,10 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 }
 
 func CreatePrinter(printer model.Printer) (model.Printer, error) {
+	status := BillPrinter.Status(printer.Sn)
+	if status.Ret == 1 {
+		return printer, errors.New("printer don't exists")
+	}
 	DB.Save(&printer)
 	return printer, nil
 }

@@ -44,6 +44,10 @@ github.com/Dparty/core-api v0.0.0-20231006032307-e4305519973f h1:EVZqbvUF41c+OQq
 github.com/Dparty/core-api v0.0.0-20231006032307-e4305519973f/go.mod h1:r8/K23NTssT61QjnpTJsghVkvFaWNaZTp1nMu9pEuFE=
 github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820 h1:TqRKzaKRmJISJ97qS8QRA+wF6OE1R+IEVBEU/EsWKm8=
 github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
+github.com/Dparty/feieyun v0.0.0-20231007023333-96c65bb8c1f4 h1:k+4HqstpvqW1Mf1NIV5IPKxDjODQ8a8CN1o3Gh0VT6Y=
+github.com/Dparty/feieyun v0.0.0-20231007023333-96c65bb8c1f4/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
+github.com/Dparty/feieyun v0.0.0-20231007023620-498ff5d6ca69 h1:7AhmxlpbRL4P0GDojWh6thfYv9Qx/Mz1FxjYAaULxA0=
+github.com/Dparty/feieyun v0.0.0-20231007023620-498ff5d6ca69/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
 github.com/Dparty/model v0.0.0-20231001095235-ab5041520eee h1:JbLwvaBQLP205oI6GzBxYc4b5IuKN9uIUmK4toMc9r0=
 github.com/Dparty/model v0.0.0-20231001095235-ab5041520eee/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
 github.com/Dparty/model v0.0.0-20231007011052-9eaa02ef76dd h1:Hjq7aTDQpDvpm4aQ5HPUrF1zQ6EXmVIzCoSuBPF1VHk=
