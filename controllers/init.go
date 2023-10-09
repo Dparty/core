@@ -7,19 +7,13 @@ import (
 	"github.com/Dparty/common/server"
 	api "github.com/Dparty/core-api"
 	"github.com/Dparty/core/services"
+	"github.com/Dparty/feieyun"
 	"github.com/Dparty/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 var router *gin.Engine
-
-type FeieyunCallback struct {
-	OrderId string `form:"orderId" json:"orderId" binding:"required"`
-	Status  int    `form:"status" json:"status" binding:"required"`
-	Stime   int    `form:"stime" json:"stime" binding:"required"`
-	Sign    string `form:"sign" json:"sign" binding:"required"`
-}
 
 var db *gorm.DB
 
@@ -36,7 +30,7 @@ func Init(inject *gorm.DB) {
 		ctx.JSON(http.StatusOK, "")
 	})
 	router.POST("/feieyun/callback", func(ctx *gin.Context) {
-		var feieyunCallback FeieyunCallback
+		var feieyunCallback feieyun.FeieyunCallback
 		if err := ctx.ShouldBind(&feieyunCallback); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return

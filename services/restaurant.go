@@ -73,15 +73,6 @@ func CreateItem(restaurantId uint, item model.Item) (model.Item, error) {
 	return item, nil
 }
 
-func GetItem(id uint) (model.Item, error) {
-	var item model.Item
-	ctx := DB.Find(&item, id)
-	if ctx.RowsAffected == 0 {
-		return item, fault.ErrUndefined
-	}
-	return item, nil
-}
-
 func UpdateItem(id uint, item model.Item) (model.Item, error) {
 	item.ID = id
 	var old model.Item
@@ -176,7 +167,7 @@ func GetTable(id uint) model.Table {
 }
 
 func CreateOrder(restaurantId, itemId uint, optionsMap map[string]string) (model.Order, error) {
-	item, err := GetItem(itemId)
+	item, err := model.FindItem(itemId)
 	var options []model.Pair = make([]model.Pair, 0)
 	if item.RestaurantId != restaurantId {
 		return model.Order{}, fault.ErrNotFound

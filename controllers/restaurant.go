@@ -105,7 +105,7 @@ func (RestaurantApi) UpdateItem(ctx *gin.Context, id string, request api.PutItem
 				ctx.String(http.StatusBadRequest, "")
 			}
 			itemId := utils.StringToUint(id)
-			item, err := services.GetItem(itemId)
+			item, err := model.FindItem(itemId)
 			if err != nil {
 				fault.GinHandler(ctx, err)
 				return
@@ -128,7 +128,7 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 	middleware.GetAccount(ctx,
 		func(c *gin.Context, account core.Account) {
 			itemId := utils.StringToUint(id)
-			item, err := services.GetItem(itemId)
+			item, err := model.FindItem(itemId)
 			if err != nil {
 				fault.GinHandler(ctx, err)
 				return
@@ -144,7 +144,7 @@ func (RestaurantApi) DeleteItem(ctx *gin.Context, id string) {
 }
 
 func (RestaurantApi) GetItem(ctx *gin.Context, id string) {
-	item, err := services.GetItem(utils.StringToUint(id))
+	item, err := model.FindItem(utils.StringToUint(id))
 	if err != nil {
 		fault.GinHandler(ctx, err)
 		return
@@ -215,7 +215,7 @@ func (RestaurantApi) UploadItemImage(ctx *gin.Context, id string) {
 	middleware.GetAccount(ctx,
 		func(ctx *gin.Context, account core.Account) {
 			itemId := utils.StringToUint(id)
-			item, err := services.GetItem(itemId)
+			item, err := model.FindItem(itemId)
 			if err != nil {
 				fault.GinHandler(ctx, err)
 				return
