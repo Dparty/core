@@ -204,7 +204,7 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	var printers []model.Printer
 	DB.Where("restaurant_id = ?", table.RestaurantId).Find(&printers)
 	content := ""
-	content += fmt.Sprintf("<CB>%s</CB><BR>", restaurantName)
+	content += fmt.Sprintf("<C><B><B>%s</B></B></C><BR>", restaurantName)
 	content += fmt.Sprintf("<C><L><B>餐號: A%d</B></L></C>", bill.PickUpCode)
 	content += fmt.Sprintf("<C><L><B>桌號: %s</B></L></C>", table.Label)
 	content += "--------------------------------<BR>"
