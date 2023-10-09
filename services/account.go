@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/Dparty/common/constants"
@@ -35,11 +34,9 @@ func (a *Account) Backward(account core.Account) *Account {
 }
 
 func CreateSession(email, password string) (*Session, error) {
-	var account core.Account
-	ctx := DB.Find(&account, "email = ?", email)
-	fmt.Println(account)
-	if ctx.RowsAffected == 0 {
-		return nil, fault.ErrNotFound
+	account, err := core.FindAccountByEmail(email)
+	if err != nil {
+		return nil, err
 	}
 	if !utils.PasswordsMatch(account.Password, password, account.Salt) {
 		return nil, fault.ErrUnauthorized
@@ -63,10 +60,9 @@ func CreateSession(email, password string) (*Session, error) {
 }
 
 func UpdatePassword(accountId uint, oldPassword, newPassword string) error {
-	var account core.Account
-	ctx := DB.First(&account, accountId)
-	if ctx.RowsAffected == 0 {
-		return fault.ErrNotFound
+	account, err := core.FindAccount(accountId)
+	if err != nil {
+		return err
 	}
 	if !utils.PasswordsMatch(account.Password, oldPassword, account.Salt) {
 		return fault.ErrUnauthorized
@@ -79,10 +75,9 @@ func UpdatePassword(accountId uint, oldPassword, newPassword string) error {
 }
 
 func UpdatePasswordForce(accountId uint, newPassword string) error {
-	var account core.Account
-	ctx := DB.First(&account, accountId)
-	if ctx.RowsAffected == 0 {
-		return fault.ErrNotFound
+	account, err := core.FindAccount(accountId)
+	if err != nil {
+		return err
 	}
 	hashed, salt := utils.HashWithSalt(newPassword)
 	account.Password = hashed
@@ -92,9 +87,8 @@ func UpdatePasswordForce(accountId uint, newPassword string) error {
 }
 
 func CreateAccount(email, password string, role constants.Role) (*Account, error) {
-	var accounts []core.Account
-	DB.Find(&accounts, "email = ?", email)
-	if len(accounts) > 0 {
+	_, err := core.FindAccountByEmail(email)
+	if err == nil {
 		return nil, fault.ErrEmailExists
 	}
 	hashed, salt := utils.HashWithSalt(password)
@@ -116,16 +110,10 @@ func CreateAccount(email, password string, role constants.Role) (*Account, error
 }
 
 func GetAccountById(id uint) *Account {
-	var coreAccount core.Account
-	DB.Find(&coreAccount, id)
-	if coreAccount.ID == 0 {
+	coreAccount, err := core.FindAccount(id)
+	if err != nil {
 		return nil
 	}
 	var account Account
 	return account.Backward(coreAccount)
-}
-
-func GetAccountByEmail(email string) {
-	var account core.Account
-	DB.First(&account, "email = ?", email)
 }
