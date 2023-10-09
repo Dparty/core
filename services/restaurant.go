@@ -247,7 +247,7 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 				printersString[printer] = fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
 				printersString[printer] += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 			}
-			printersString[printer] += order.Order.Item.Name + "<BR>"
+			printersString[printer] += fmt.Sprintf("<B>%s %.2f X %d</B><BR>", order.Order.Item.Name, float64(order.Order.Item.Pricing)/100, order.Number)
 			printersString[printer] += attributesWithoutMonth
 		}
 	}
