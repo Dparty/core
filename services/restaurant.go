@@ -200,8 +200,31 @@ func CreateBill(restaurantName string, table model.Table, orders model.Orders) (
 	return bill, nil
 }
 
+type OrderNumber struct {
+	Number int
+	Order  model.Order
+}
+
+func PrintHelper(order model.Order, orders []OrderNumber) []OrderNumber {
+	for i, o := range orders {
+		if order.Equal(o.Order) {
+			orders[i].Number++
+			return orders
+		}
+	}
+	orders = append(orders, OrderNumber{
+		Number: 1,
+		Order:  order,
+	})
+	return orders
+}
+
 func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprint bool) {
 	var printers []model.Printer
+	orderNumbers := make([]OrderNumber, 0)
+	for _, order := range bill.Orders {
+		orderNumbers = PrintHelper(order, orderNumbers)
+	}
 	DB.Where("restaurant_id = ?", table.RestaurantId).Find(&printers)
 	content := ""
 	content += fmt.Sprintf("<CB>%s</CB><BR>", restaurantName)
@@ -209,22 +232,22 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	content += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 	content += "--------------------------------<BR>"
 	var printersString map[uint]string = make(map[uint]string)
-	for _, order := range bill.Orders {
-		content += fmt.Sprintf("<B>%s %.2f</B><BR>", order.Item.Name, float64(order.Item.Pricing)/100)
+	for _, order := range orderNumbers {
+		content += fmt.Sprintf("<B>%s %.2f X %d</B><BR>", order.Order.Item.Name, float64(order.Order.Item.Pricing)/100, order.Number)
 		attributes := ""
 		attributesWithoutMonth := ""
-		for _, option := range order.Specification {
-			attributes += fmt.Sprintf("<B>|-- %s +%.2f</B><BR>", option.Right, float64(order.Extra(option))/100)
+		for _, option := range order.Order.Specification {
+			attributes += fmt.Sprintf("<B>|-- %s +%.2f</B><BR>", option.Right, float64(order.Order.Extra(option))/100)
 			attributesWithoutMonth += fmt.Sprintf("<B>|--  %s</B><BR>", option.Right)
 		}
 		content += attributes
-		for _, printer := range order.Item.Printers {
+		for _, printer := range order.Order.Item.Printers {
 			_, ok := printersString[printer]
 			if !ok {
 				printersString[printer] = fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
 				printersString[printer] += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 			}
-			printersString[printer] += order.Item.Name + "<BR>"
+			printersString[printer] += order.Order.Item.Name + "<BR>"
 			printersString[printer] += attributesWithoutMonth
 		}
 	}
@@ -234,7 +257,7 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 		p.Print(v, "")
 	}
 	content += "--------------------------------<BR>"
-	content += fmt.Sprintf("合計:%.2f元<BR>", float64(bill.Total())/100)
+	content += fmt.Sprintf("合計: %.2f元<BR>", float64(bill.Total())/100)
 	for _, printer := range printers {
 		if printer.Type == "BILL" {
 			p, _ := printerFactory.Connect(printer.Sn)

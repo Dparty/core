@@ -6,7 +6,7 @@ require (
 	github.com/Dparty/common v0.0.0-20230929033726-ff769bca8c94
 	github.com/Dparty/core-api v0.0.0-20231009130525-8b0d9b5c8119
 	github.com/Dparty/feieyun v0.0.0-20231009061625-f3e447980d9d
-	github.com/Dparty/model v0.0.0-20231009055401-3b5f0bbe5922
+	github.com/Dparty/model v0.0.0-20231009145509-4bfaa0281569
 	github.com/chenyunda218/golambda v0.0.0-20230809035428-25245dc9a8bd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/gorilla/websocket v1.5.0
