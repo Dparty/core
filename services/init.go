@@ -15,7 +15,7 @@ var DB *gorm.DB
 
 var CosClient cloud.CosClient
 var Bucket string
-var BillPrinter feieyun.Printer
+var printerFactory feieyun.PrinterFactory
 
 func init() {
 	var err error
@@ -29,7 +29,7 @@ func init() {
 	user := viper.GetString("feieyun.user")
 	ukey := viper.GetString("feieyun.ukey")
 	url := viper.GetString("feieyun.url")
-	BillPrinter = feieyun.NewPrinter(user, ukey, url)
+	printerFactory = feieyun.NewPrinterFactory(user, ukey, url)
 }
 
 func init() {
