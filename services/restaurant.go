@@ -210,12 +210,12 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	content += "--------------------------------<BR>"
 	var printersString map[uint]string = make(map[uint]string)
 	for _, order := range bill.Orders {
-		content += fmt.Sprintf("%s %.2f<BR>", order.Item.Name, float64(order.Item.Pricing)/100)
+		content += fmt.Sprintf("<B>%s %.2f</B><BR>", order.Item.Name, float64(order.Item.Pricing)/100)
 		attributes := ""
 		attributesWithoutMonth := ""
 		for _, option := range order.Specification {
-			attributes += fmt.Sprintf("  |--   %s +%.2f<BR>", option.Right, float64(order.Extra(option))/100)
-			attributesWithoutMonth += fmt.Sprintf("  |--   %s<BR>", option.Right)
+			attributes += fmt.Sprintf("<B>  |--   %s +%.2f</B><BR>", option.Right, float64(order.Extra(option))/100)
+			attributesWithoutMonth += fmt.Sprintf("<B>  |--   %s</B><BR>", option.Right)
 		}
 		content += attributes
 		for _, printer := range order.Item.Printers {
