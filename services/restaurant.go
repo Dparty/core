@@ -204,9 +204,9 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	var printers []model.Printer
 	DB.Where("restaurant_id = ?", table.RestaurantId).Find(&printers)
 	content := ""
-	content += fmt.Sprintf("<C><B><B>%s</B></B></C><BR>", restaurantName)
-	content += fmt.Sprintf("<C><L><B>餐號: A%d</B></L></C>", bill.PickUpCode)
-	content += fmt.Sprintf("<C><L><B>桌號: %s</B></L></C>", table.Label)
+	content += fmt.Sprintf("<CB>%s</CB><BR>", restaurantName)
+	content += fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
+	content += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 	content += "--------------------------------<BR>"
 	var printersString map[uint]string = make(map[uint]string)
 	for _, order := range bill.Orders {
@@ -221,8 +221,8 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 		for _, printer := range order.Item.Printers {
 			_, ok := printersString[printer]
 			if !ok {
-				printersString[printer] = fmt.Sprintf("<C><L><B>桌號: %s</B></L></C><BR>", table.Label)
-				printersString[printer] += fmt.Sprintf("<C><L><B>A%d</B></L></C><BR>", bill.PickUpCode)
+				printersString[printer] = fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
+				printersString[printer] += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 			}
 			printersString[printer] += order.Item.Name + "<BR>"
 			printersString[printer] += attributesWithoutMonth
