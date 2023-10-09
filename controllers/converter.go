@@ -56,6 +56,12 @@ func RestaurantBackward(restaurant model.Restaurant) api.Restaurant {
 		Name:        restaurant.Name,
 		Description: restaurant.Description,
 		Tags:        restaurant.Tags,
+		Tables: f.Map(restaurant.Tables, func(_ int, table model.Table) api.Table {
+			return api.Table{
+				Label: table.Label,
+				Id:    utils.UintToString(table.ID),
+			}
+		}),
 		Items: f.Map(restaurant.GetItems(), func(_ int, item model.Item) api.Item {
 			return ItemBackward(item)
 		}),
