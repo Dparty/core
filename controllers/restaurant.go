@@ -251,8 +251,9 @@ func (RestaurantApi) CreateBill(ctx *gin.Context, tableId string, request api.Cr
 		}
 		orders = append(orders, order)
 	}
-	services.CreateBill(restaurant.Name, table, orders)
+	bill, _ := services.CreateBill(restaurant.Name, table, orders)
 	ctx.JSON(http.StatusCreated, api.Bill{
+		Id:     utils.UintToString(bill.ID),
 		Orders: make([]api.Order, 0),
 	})
 }
