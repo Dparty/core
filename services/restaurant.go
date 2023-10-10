@@ -194,6 +194,7 @@ func CreateBill(restaurantName string, table model.Table, orders model.Orders) (
 	}
 	bill := model.Bill{RestaurantId: table.RestaurantId,
 		Orders: orders, TableLabel: table.Label,
+		TableId:    table.ID,
 		PickUpCode: pickUpCode}
 	DB.Save(&bill)
 	PrintBill(restaurantName, bill, table, false)

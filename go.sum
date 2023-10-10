@@ -46,6 +46,8 @@ github.com/Dparty/core-api v0.0.0-20231009130207-e7914bb72d8c h1:gd2G3hq7lcpxdgU
 github.com/Dparty/core-api v0.0.0-20231009130207-e7914bb72d8c/go.mod h1:r8/K23NTssT61QjnpTJsghVkvFaWNaZTp1nMu9pEuFE=
 github.com/Dparty/core-api v0.0.0-20231009130525-8b0d9b5c8119 h1:FUX0ZkOoi0liUcN+VV+IQTWLe4TSi4foopjkt7q91b0=
 github.com/Dparty/core-api v0.0.0-20231009130525-8b0d9b5c8119/go.mod h1:r8/K23NTssT61QjnpTJsghVkvFaWNaZTp1nMu9pEuFE=
+github.com/Dparty/core-api v0.0.0-20231010093136-4194546ccb3d h1:8seLsVMT8vV8S33XA6nfWqwIo7RU7NS5+sUFRf8wIek=
+github.com/Dparty/core-api v0.0.0-20231010093136-4194546ccb3d/go.mod h1:r8/K23NTssT61QjnpTJsghVkvFaWNaZTp1nMu9pEuFE=
 github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820 h1:TqRKzaKRmJISJ97qS8QRA+wF6OE1R+IEVBEU/EsWKm8=
 github.com/Dparty/feieyun v0.0.0-20230923022532-a762e246f820/go.mod h1:MRJeY/NuyVojLTIm2DymDcP4ryYPqcESMOdYUCoXSjA=
 github.com/Dparty/feieyun v0.0.0-20231007023333-96c65bb8c1f4 h1:k+4HqstpvqW1Mf1NIV5IPKxDjODQ8a8CN1o3Gh0VT6Y=
@@ -66,6 +68,8 @@ github.com/Dparty/model v0.0.0-20231009055401-3b5f0bbe5922 h1:oGKsrDVPz9t6Rweslu
 github.com/Dparty/model v0.0.0-20231009055401-3b5f0bbe5922/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
 github.com/Dparty/model v0.0.0-20231009145509-4bfaa0281569 h1:8JbmRWfAR8bxj5tNVb30xFjLsBDQwZhO/ZksFaOljeY=
 github.com/Dparty/model v0.0.0-20231009145509-4bfaa0281569/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
+github.com/Dparty/model v0.0.0-20231010094050-6e22ab21a565 h1:cO7OE5Wsc6N4pUdjnTStM4icO4nLqwkS9D8D7jUTZFc=
+github.com/Dparty/model v0.0.0-20231010094050-6e22ab21a565/go.mod h1:d8KReUG9UUAfjpUuDoTizJacdR9Upui6ZVmTsVSIJIM=
 github.com/QcloudApi/qcloud_sign_golang v0.0.0-20141224014652-e4130a326409/go.mod h1:1pk82RBxDY/JZnPQrtqHlUFfCctgdorsd9M06fMynOM=
 github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
 github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=

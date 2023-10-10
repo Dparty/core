@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
@@ -16,22 +15,29 @@ import (
 
 type RestaurantApi struct{}
 
-// GetTable implements coreapi.RestaurantApiInterface.
-func (RestaurantApi) GetTable(gin_context *gin.Context, id string) {
+// FinishBill implements coreapi.RestaurantApiInterface.
+func (RestaurantApi) FinishBill(gin_context *gin.Context, id string) {
+	panic("unimplemented")
+}
+
+// GetBill implements coreapi.RestaurantApiInterface.
+func (RestaurantApi) GetBill(gin_context *gin.Context, id string) {
 	panic("unimplemented")
 }
 
 // ListBills implements coreapi.RestaurantApiInterface.
-func (RestaurantApi) ListBills(ctx *gin.Context, restaurantId string, startAt int64, endAt int64) {
-	middleware.RestaurantOwner(ctx, restaurantId,
-		func(c *gin.Context, account core.Account, restaurant model.Restaurant) {
-			start := time.Unix(startAt, 0)
-			end := time.Unix(endAt, 0)
-			restaurant.ListBill(&start, &end)
-			ctx.JSON(http.StatusOK, api.BillList{
-				// Data: ,
-			})
-		})
+func (RestaurantApi) ListBills(gin_context *gin.Context, restaurantId string, status string, startAt int64, endAt int64, tableId string) {
+	panic("unimplemented")
+}
+
+// ListTablesBills implements coreapi.RestaurantApiInterface.
+func (RestaurantApi) ListTablesBills(gin_context *gin.Context, id string) {
+	panic("unimplemented")
+}
+
+// GetTable implements coreapi.RestaurantApiInterface.
+func (RestaurantApi) GetTable(gin_context *gin.Context, id string) {
+	panic("unimplemented")
 }
 
 func (RestaurantApi) UpdateRestaurant(ctx *gin.Context, restaurantId string, request api.PutRestaurantRequest) {
