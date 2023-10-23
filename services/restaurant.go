@@ -206,9 +206,26 @@ type OrderNumber struct {
 	Order  model.Order
 }
 
+func Equal(o model.Order, order model.Order) bool {
+	if o.Item.ID != order.Item.ID {
+		return false
+	}
+	om := o.SpecificationToMap()
+	tm := order.SpecificationToMap()
+	if len(om) != len(tm) {
+		return false
+	}
+	for k, v := range om {
+		if tm[k] != v {
+			return false
+		}
+	}
+	return true
+}
+
 func PrintHelper(order model.Order, orders []OrderNumber) []OrderNumber {
 	for i, o := range orders {
-		if order.Equal(o.Order) {
+		if Equal(o.Order, order) {
 			orders[i].Number++
 			return orders
 		}
