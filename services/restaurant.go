@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/Dparty/common/fault"
 	"github.com/Dparty/common/utils"
@@ -240,6 +241,7 @@ func PrintHelper(order model.Order, orders []OrderNumber) []OrderNumber {
 
 func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprint bool) {
 	var printers []model.Printer
+	timestring := time.Now().Format("2006-01-02 15:04")
 	orderNumbers := make([]OrderNumber, 0)
 	for _, order := range bill.Orders {
 		orderNumbers = PrintHelper(order, orderNumbers)
@@ -273,10 +275,11 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	for k, v := range printersString {
 		foodPrinter := GetPrinter(k)
 		p, _ := printerFactory.Connect(foodPrinter.Sn)
-		p.Print(v, "")
+		p.Print(v+"<BR>"+timestring, "")
 	}
 	content += "--------------------------------<BR>"
-	content += fmt.Sprintf("合計: %.2f元<BR> (+10%%)", math.Floor(float64(bill.Total())/100*1.1))
+	content += fmt.Sprintf("合計: %.2f元 (+10%%)<BR>", math.Floor(float64(bill.Total())/100*1.1))
+	content += timestring
 	for _, printer := range printers {
 		if printer.Type == "BILL" {
 			p, _ := printerFactory.Connect(printer.Sn)
