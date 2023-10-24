@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"math"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -275,7 +276,7 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 		p.Print(v, "")
 	}
 	content += "--------------------------------<BR>"
-	content += fmt.Sprintf("合計: %.2f元<BR>", float64(bill.Total())/100)
+	content += fmt.Sprintf("合計: %.2f元<BR> (+10%%)", math.Floor(float64(bill.Total())/100*1.1))
 	for _, printer := range printers {
 		if printer.Type == "BILL" {
 			p, _ := printerFactory.Connect(printer.Sn)
