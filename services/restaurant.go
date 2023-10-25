@@ -241,7 +241,7 @@ func PrintHelper(order model.Order, orders []OrderNumber) []OrderNumber {
 
 func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprint bool) {
 	var printers []model.Printer
-	timestring := time.Now().Format("2006-01-02 15:04")
+	timestring := time.Now().Add(time.Hour * 8).Format("2006-01-02 15:04")
 	orderNumbers := make([]OrderNumber, 0)
 	for _, order := range bill.Orders {
 		orderNumbers = PrintHelper(order, orderNumbers)
