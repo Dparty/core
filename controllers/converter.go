@@ -100,6 +100,7 @@ func ItemForward(item api.PutItemRequest) model.Item {
 		attributes = append(attributes, AttributeForward(a))
 	}
 	return model.Item{
+		Images:     item.Images,
 		Name:       item.Name,
 		Pricing:    item.Pricing,
 		Attributes: attributes,
