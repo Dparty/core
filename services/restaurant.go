@@ -278,7 +278,7 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 		p.Print(v+"<BR>"+timestring, "")
 	}
 	content += "--------------------------------<BR>"
-	content += fmt.Sprintf("<B>合計: %.2f元 (-5%%)</B><BR>", math.Floor(float64(bill.Total())/100*0.95))
+	content += fmt.Sprintf("<B>合計: %.2f元 (+10%%)</B><BR>", math.Floor(float64(bill.Total())/100*1.1))
 	content += timestring
 	for _, printer := range printers {
 		if printer.Type == "BILL" {
