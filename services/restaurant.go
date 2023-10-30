@@ -252,34 +252,33 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 	content += fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
 	content += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 	content += "--------------------------------<BR>"
-	var printersString map[uint]string = make(map[uint]string)
 	for _, order := range orderNumbers {
 		content += fmt.Sprintf("<B>%s %.2fX%d</B><BR>", order.Order.Item.Name, float64(order.Order.Item.Pricing)/100, order.Number)
 		attributes := ""
-		attributesWithoutMonth := ""
 		for _, option := range order.Order.Specification {
 			attributes += fmt.Sprintf("<B>|-- %s +%.2f</B><BR>", option.Right, float64(order.Order.Extra(option))/100)
-			attributesWithoutMonth += fmt.Sprintf("<B>|--  %s</B><BR>", option.Right)
 		}
 		content += attributes
+	}
+	for _, order := range orderNumbers {
+		a := fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
+		a += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
+		for _, option := range order.Order.Specification {
+			a += fmt.Sprintf("<B>%s X%d</B><BR>", order.Order.Item.Name, order.Number)
+			a += fmt.Sprintf("<B>|--  %s</B><BR>", option.Right)
+		}
 		for _, printer := range order.Order.Item.Printers {
-			_, ok := printersString[printer]
-			if !ok {
-				printersString[printer] = fmt.Sprintf("<CB>餐號: %d</CB><BR>", bill.PickUpCode)
-				printersString[printer] += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
-			}
-			printersString[printer] += fmt.Sprintf("<B>%sX%d</B><BR>", order.Order.Item.Name, order.Number)
-			printersString[printer] += attributesWithoutMonth
+			foodPrinter := GetPrinter(printer)
+			p, _ := printerFactory.Connect(foodPrinter.Sn)
+			p.Print(a+"<BR>"+timestring, "")
 		}
 	}
-	for k, v := range printersString {
-		foodPrinter := GetPrinter(k)
-		p, _ := printerFactory.Connect(foodPrinter.Sn)
-		p.Print(v+"<BR>"+timestring, "")
-	}
+
 	content += "--------------------------------<BR>"
 	content += fmt.Sprintf("<B>合計: %.2f元 (+10%%)</B><BR>", math.Floor(float64(bill.Total())/100*1.1))
 	content += timestring
+
+	// Print for bill
 	for _, printer := range printers {
 		if printer.Type == "BILL" {
 			p, _ := printerFactory.Connect(printer.Sn)
