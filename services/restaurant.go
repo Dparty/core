@@ -265,7 +265,6 @@ func PrintBill(restaurantName string, bill model.Bill, table model.Table, reprin
 		a += fmt.Sprintf("<CB>桌號: %s</CB><BR>", table.Label)
 		a += fmt.Sprintf("<B>%s X%d</B><BR>", order.Order.Item.Name, order.Number)
 		for _, option := range order.Order.Specification {
-			a += fmt.Sprintf("<B>%s X%d</B><BR>", order.Order.Item.Name, order.Number)
 			a += fmt.Sprintf("<B>|--  %s</B><BR>", option.Right)
 		}
 		for _, printer := range order.Order.Item.Printers {
